@@ -32,14 +32,14 @@ Let's dive into each component.
 The heart of my CI/CD pipeline is the `build-k8s.yaml` GitHub Actions workflow. It uses semantic versioning to create releases based on commit messages.
 
 ### Key Features:
-- **Semantic Release**: Analyzes commit messages (e.g., `feat:`, `fix:`) to determine version bumps.
-- **Docker Build**: Creates multi-platform images and pushes to GitHub Container Registry (GHCR).
+- **Semantic Release**: Analyzes commit messages (e.g., `feat:`, `fix:`) to determine version bumps. Configured in [.releaserc.json](/.releaserc.json).
+- **Docker Build**: Creates multi-platform images and pushes to GitHub Container Registry (GHCR) using the multi-stage [Dockerfile](Dockerfile).
 - **Tagging Strategy**: Generates version tags like `v1.2.3`, `v1.2`, `v1`, and SHA-based tags for flexibility.
 
 The workflow runs on pushes to `main` or manual dispatch. It outputs image metadata for easy consumption by deployment tools.
 
 ```yaml
-# From [.github/workflows/build-k8s.yml](https://github.com/pipitonelabs/blogv2/blob/main/.github/workflows/build-k8s.yml)
+# From [.github/workflows/build-k8s.yaml](https://github.com/pipitonelabs/blogv2/blob/main/.github/workflows/build-k8s.yaml)
 jobs:
   release:
     name: Semantic Release & Build Image
@@ -136,7 +136,7 @@ Have you deployed personal projects in Kubernetes? I'd love to hear your experie
 ## Next Steps
 
 If you'd like to replicate this setup:
-1. Set up semantic-release in your repo.
+1. Add [.releaserc.json](/.releaserc.json) and [Dockerfile](Dockerfile), then set up semantic-release in your repo.
 2. Configure Flux in your cluster.
 3. Integrate External-DNS and Envoy Gateway.
 
