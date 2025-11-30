@@ -39,8 +39,11 @@ jobs:
         with:
           semantic_version: 25.0.2
           extra_plugins: |
-            @semantic-release/git
+            @semantic-release/commit-analyzer
+            @semantic-release/release-notes-generator
             @semantic-release/changelog
+            @semantic-release/github
+            @semantic-release/git
             conventional-changelog-conventionalcommits
 
   build-and-push:
