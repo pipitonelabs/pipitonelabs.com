@@ -4,6 +4,7 @@ export const socialLinks = [
   'discord',
   'youtube',
   'instagram',
+  'linkedin',
   'x',
   'telegram',
   'rss',

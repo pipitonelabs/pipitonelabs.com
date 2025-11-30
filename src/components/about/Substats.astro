@@ -50,13 +50,11 @@ await Promise.all(stats.map(fetchCount))
           <div class='flex-1 text-foreground transition-colors group-hover:text-primary'>
             {platform}
           </div>
-          {count ? (
+          {count && (
             <div class='flex items-center gap-1.5'>
               <samp>{count}</samp>
               <span class='text-sm font-normal'>{text}</span>
             </div>
-          ) : (
-            'null'
           )}
         </div>
       </a>

@@ -1,7 +1,7 @@
 ---
 import { Image } from 'astro:assets'
 
-import { Quote } from 'astro-pure/advanced'
+//import { Quote } from 'astro-pure/advanced'
 import { PostPreview } from 'astro-pure/components/pages'
 import { getBlogCollection, sortMDByDate } from 'astro-pure/server'
 import { Button, Card, Icon, Label } from 'astro-pure/user'
@@ -11,9 +11,9 @@ import Section from '@/components/home/Section.astro'
 import SkillLayout from '@/components/home/SkillLayout.astro'
 import config from '@/site-config'
 
-const languages = ['Html', 'JavaScript', 'CSS', 'Shell']
-const frontend = ['TypeScript', 'Vite', 'Webpack', 'Astro']
-const backend = ['Vercel', 'Waline']
+const languages = ['Terraform', 'CloudFormation', 'CSS', 'PowerShell', 'YAML', 'Python']
+const infra = ['GitOps', 'Flux', 'VMware', 'SonicWALL', 'UniFi', 'F5']
+const platforms = ['AWS', 'Azure', 'Kubernetes', 'Docker', 'Talos Linux', 'Ubuntu']
 
 const MAX_POSTS = 10
 const allPosts = await getBlogCollection()
@@ -43,21 +43,38 @@ if (!images[imagePath])
       <div class='flex flex-col items-center gap-y-4'>
         <h1 class='text-3xl font-bold'>{config.author}</h1>
         <div class='flex flex-wrap justify-center gap-x-7 gap-y-3'>
-          <Label title='China'>
+          <Label title='Fairport, NY'>
             <Icon name='location' class='size-5' slot='icon' />
           </Label>
           <Label
             title='Source code'
             as='a'
-            href='https://github.com/cworld1/astro-theme-pure'
+            href='https://github.com/pipitonelabs/blogv3'
             target='_blank'
           >
             <Icon name='github' class='size-5' slot='icon' />
           </Label>
+          <Label
+						title='Connect on Linkedin'
+						as='a'
+						href='https://www.linkedin.com/in/jpipitone/'
+						target='_blank'
+					>
+						<svg
+							xmlns='http://www.w3.org/2000/svg'
+							viewBox='0 0 16 16'
+							slot='icon'
+							class='h-5 w-5 text-foreground/75'
+							><path
+								fill='currentColor'
+								d='M0 1.146C0 .513.526 0 1.175 0h13.65C15.474 0 16 .513 16 1.146v13.708c0 .633-.526 1.146-1.175 1.146H1.175C.526 16 0 15.487 0 14.854zm4.943 12.248V6.169H2.542v7.225zm-1.2-8.212c.837 0 1.358-.554 1.358-1.248c-.015-.709-.52-1.248-1.342-1.248S2.4 3.226 2.4 3.934c0 .694.521 1.248 1.327 1.248zm4.908 8.212V9.359c0-.216.016-.432.08-.586c.173-.431.568-.878 1.232-.878c.869 0 1.216.662 1.216 1.634v3.865h2.401V9.25c0-2.22-1.184-3.252-2.764-3.252c-1.274 0-1.845.7-2.165 1.193v.025h-.016l.016-.025V6.169h-2.4c.03.678 0 7.225 0 7.225z'
+							></path></svg
+						>
+					</Label>
         </div>
       </div>
 
-      {/* Get template */}
+      {/* Get template 
       <a
         href='https://github.com/cworld1/astro-theme-pure'
         target='_blank'
@@ -71,17 +88,187 @@ if (!images[imagePath])
         </span>
         <p class='font-medium text-muted-foreground'>Get Template</p>
       </a>
+    */}
     </section>
 
     <div id='content' class='animate flex flex-col gap-y-10 md:w-4/5 lg:w-5/6'>
       <Section title='About'>
-        <p class='text-muted-foreground'>Developer / Designer</p>
+        <p class='text-muted-foreground'>Cloud Engineer</p>
         <p class='text-muted-foreground'>
-          Lorem ipsum dolor sit amet, vidit suscipit at mei. Quem denique mea id. Usu ei regione
-          indoctum dissentiunt, cu meliore fuisset mei, vel quod voluptua ne. Ex dicat impedit mel,
-          at eum oratio possit voluptatum.
+          I am a Cloud Engineer working on AWS, Azure, Infrastructure & Automation, and GitOps / Kubernetes.
+          I like to continuously expand my knowledge using my HomeLab environment to deploy and experiment with open source technologies.
         </p>
         <Button title='More about me' class='w-fit self-end' href='/about' variant='ahead' />
+      </Section>
+      <Section title='Education'>
+        <Card
+          as='a'
+          heading='B.S. Information Technology'
+          subheading='Point Park University - Pittsburgh, PA'
+          date='2004'
+          href='https://www.pointpark.edu/index'
+          target='_blank'
+        >
+          {
+            /* <ul class='ms-4 list-disc text-muted-foreground'>
+              <li>
+                Lorem, ipsum dolor sit amet consectetur adipisicing elit. Dolore debitis recusandae, ut
+                molestiae laboriosam pariatur!
+              </li>
+              <li>Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestiae, pariatur!</li>
+            </ul> */
+          }
+        </Card>
+      </Section>
+      <Section title='Certifications'>
+        <Card
+          as='a'
+          href='https://www.credly.com/users/joe-pipitone'
+          target='_blank'
+          heading='AWS Certified Solutions Architect - Associate'
+          subheading='Amazon Web Services'
+          date='2/28/2024'
+        >
+        </Card>
+        <Card
+          as='a'
+          href='https://www.credly.com/users/joe-pipitone'
+          target='_blank'
+          heading='AWS Certified Cloud Practitioner'
+          subheading='Amazon Web Services'
+          date='12/16/2022'
+        >
+        </Card>
+        <Card
+          as='a'
+          href='https://www.credly.com/users/joe-pipitone'
+          target='_blank'
+          subheading='Microsoft'
+          heading='Microsoft Certified: Azure Fundamentals'
+          date='3/18/2022'
+        >
+        </Card>
+        <Card
+          as='a'
+          href='https://www.credly.com/users/joe-pipitone'
+          target='_blank'
+          subheading='New Horizons'
+          heading='ITIL 4 Foundation'
+          date='11/1/2022'
+        >
+        </Card>
+        <Card
+          as='a'
+          href='https://vmware.com'
+          target='_blank'
+          subheading='VMware'
+          heading='VCP5-DCV: VMware Certified Professional 5'
+          date='5/1/2013'
+        >
+        </Card>
+        <Card
+          as='a'
+          href='https://microsoft.com'
+          target='_blank'
+          subheading='MCITP EA'
+          heading='Microsoft Certified IT Professional Enterprise Administrator'
+          date='1/1/2013'
+        >
+        </Card>
+      </Section>
+      <Section title='Skills'>
+        <SkillLayout title='Platforms' skills={platforms} />
+        <SkillLayout title='Languages' skills={languages} />
+        <SkillLayout title='Infrastructure' skills={infra} />
+      </Section>
+      <Section title='Experience'>
+        <Card
+          heading='Constellation Brands, Inc.'
+          as='a'
+          href='https://www.cbrands.com'
+          target='_blank'
+          subheading='Cloud Engineer'
+          date='March 2022 - Present'
+        >
+          <ul class='text-muted-foreground' style='list-style-type: disc; padding-left: 1rem;'>
+            <li>
+              Own the AWS enterprise foundation: Architect, govern, and continuously enhance a secure, scalable, multi-account AWS landing zone for 80+ accounts.
+            </li>
+            <li>
+              Establish and operationalize Cloud Center of Excellence (CCoE): Design AWS and Azure governance standards (VPC, IAM, naming/tagging, landing zones) deployed via Terraform and CloudFormation.
+            </li>
+          </ul>
+        </Card>
+        <Card
+          heading='Constellation Brands'
+          as='a'
+          href='https://www.cbrands.com'
+          subheading='Senior Office 365 Engineer'
+          date='March 2020 - May 2022'
+        >
+          <ul class='text-muted-foreground' style='list-style-type: disc; padding-left: 1rem;'>
+            <li>
+              Serve as global Subject Matter Expert (SME) for Microsoft 365 Messaging & Collaboration stack: Own enterprise-wide architecture, governance, and support for Exchange Online, SharePoint Online, OneDrive, Microsoft Teams, Proofpoint, Power Apps, and Azure services across the US, Mexico, Italy, and New Zealand.
+            </li>
+            <li>
+              Led post-acquisition integrations and divestiture separations, including migrations and transitions.
+            </li>
+          </ul>
+        </Card>
+        <Card
+          heading='1105 Media, Inc.'
+          as='a'
+          href='https://www.1105media.com'
+          subheading='IT Systems Operations Engineer'
+          date='June 2018 - March 2020'
+        >
+          <ul class='text-muted-foreground' style='list-style-type: disc; padding-left: 1rem;'>
+            <li>
+              Responsible for Infrastructure architecture and development in an enterprise environment.
+            </li>
+            <li>
+              Architected and managed VMware vSphere clusters, Sitecore CMS, F5 BigIP, SQL clustering, and Veeam backups.
+            </li>
+          </ul>
+        </Card>
+        <Card
+          heading='1105 Media, Inc.'
+          as='a'
+          href='https://www.1105media.com'
+          subheading='Internet Systems Engineer'
+          date='June 2018 - March 2020'
+        >
+          <ul class='text-muted-foreground' style='list-style-type: disc; padding-left: 1rem;'>
+            <li>
+              Enterprise Network WAN/LAN Management: Racking, stacking, and cabling of servers and storage devices in multiple data centers.
+            </li>
+            <li>
+              Directly responsible for architecting, deploying, and maintaining VMware environment hosting corporate resources and clustered Sitecore CMS based websites located in a managed data center in Burbank, CA.
+            </li>
+          </ul>
+        </Card>
+      </Section>
+      <Section title='Websites'>
+        <div class='grid grid-cols-1 gap-3 sm:grid-cols-2'>
+          <ProjectCard
+            href='https://status.pipitonelabs.com'
+            heading='HomeLab Status Page'
+            subheading='Kubernetes'
+            imagePath='/src/assets/projects/gatus.png'
+          />
+          <ProjectCard
+            href='https://www.pipitonelabs.com/blog'
+            heading='Blog'
+            subheading='Blog Posts'
+            imagePath='/src/assets/projects/blog.png'
+          />
+          <ProjectCard
+            href='https://www.github.com/pipitonelabs'
+            heading='Pipitone Labs GitHub'
+            subheading="Check out what I'm working on"
+            imagePath='/src/assets/projects/github.png'
+          />
+        </div>
       </Section>
       {
         allPostsByDate.length > 0 && (
@@ -97,101 +284,7 @@ if (!images[imagePath])
           </Section>
         )
       }
-
-      {
-        /* <Section title='Experience'>
-      <Card
-        heading='Lorem Ipsum'
-        subheading='Sit amet consectetur'
-        date='Dec 2022 - Nov 2023'
-        imagePath='/src/assets/about-astro.png'
-        altText='Lorem, ipsum dolor sit'
-        imageClass='h-12 w-auto md:-start-16'
-      >
-        <ul class='ms-4 list-disc text-muted-foreground'>
-          <li>
-            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Dolore debitis recusandae, ut
-            molestiae laboriosam pariatur!
-
-            <li>Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestiae, pariatur!</li>
-          </li>
-        </ul>
-      </Card>
-      <Card
-        heading='Lorem Ipsum'
-        subheading='Sit amet consectetur'
-        date='Dec 2022 - Nov 2023'
-        imagePath='/src/assets/about-astro.png'
-        altText='Lorem, ipsum dolor sit'
-        imageClass='h-12 w-auto md:-start-16'
-      />
-    </Section> */
-      }
-      <Section title='Education'>
-        <Card
-          as='a'
-          heading='Lorem ipsum'
-          subheading='Lorem ipsum dolor sit amet, vidit suscipit at mei.'
-          date='August 2021 - July 2025'
-          href='https://www.youtube.com/watch?v=dQw4w9WgXcQ'
-        >
-          {
-            /* <ul class='ms-4 list-disc text-muted-foreground'>
-          <li>
-            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Dolore debitis recusandae, ut
-            molestiae laboriosam pariatur!
-          </li>
-          <li>Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestiae, pariatur!</li>
-        </ul> */
-          }
-        </Card>
-      </Section>
-
-      <Section title='Website List'>
-        <div class='grid grid-cols-1 gap-3 sm:grid-cols-2'>
-          <ProjectCard
-            href='https://www.youtube.com/watch?v=dQw4w9WgXcQ'
-            heading='Lorem ipsum'
-            subheading='Do not go gentle into that good night'
-            imagePath='/src/assets/projects/1.jpg'
-          />
-          <ProjectCard
-            href='https://www.youtube.com/watch?v=dQw4w9WgXcQ'
-            heading='Lorem ipsum'
-            subheading='Old age burn and rave at close of day'
-            imagePath='/src/assets/projects/2.jpg'
-          />
-          <ProjectCard
-            href='https://www.youtube.com/watch?v=dQw4w9WgXcQ'
-            heading='Lorem ipsum'
-            subheading='Rage, rage against the dying of the light'
-            imagePath='/src/assets/projects/3.jpg'
-          />
-          <ProjectCard
-            href='/projects'
-            heading='More projects'
-            subheading='Check out more projects'
-            imagePath='/src/assets/projects/4.jpg'
-          />
-        </div>
-      </Section>
-
-      <Section title='Certifications'>
-        <Card
-          as='a'
-          heading='Lorem ipsum'
-          subheading='Lorem ipsum dolor sit amet, vidit suscipit at mei. Quem denique mea id. Usu ei regione indoctum dissentiunt, cu meliore fuisset mei, vel quod voluptua ne. Ex dicat impedit mel, at eum oratio possit voluptatum. Dicat ceteros cu vim. Impetus fuisset ullamcorper pri cu, his posse iisque ad, aliquam honestatis usu id.'
-          date='July 2024'
-          href='https://www.youtube.com/watch?v=dQw4w9WgXcQ'
-        />
-      </Section>
-
-      <Section title='Skills'>
-        <SkillLayout title='Languages' skills={languages} />
-        <SkillLayout title='Frontend' skills={frontend} />
-        <SkillLayout title='Backend' skills={backend} />
-      </Section>
     </div>
-    <Quote class='mt-12' />
+    {/* <Quote class='mt-12' /> */}
   </main>
 </PageLayout>

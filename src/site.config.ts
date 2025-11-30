@@ -3,11 +3,11 @@ import type { CardListData, Config, IntegrationUserConfig, ThemeUserConfig } fro
 export const theme: ThemeUserConfig = {
   // === Basic configuration ===
   /** Title for your website. Will be used in metadata and as browser tab title. */
-  title: 'Astro Theme Pure',
+  title: 'Pipitone Labs',
   /** Will be used in index page & copyright declaration */
-  author: 'Pure Lab',
+  author: 'Joseph Pipitone',
   /** Description metadata for your website. Can be used in page metadata. */
-  description: 'Stay hungry, stay foolish',
+  description: 'the most entertaining outcome is the most likely',
   /** The default favicon for your site which should be a path to an image in the `public/` directory. */
   favicon: '/favicon/favicon.ico',
   /** The default social card image for your site which should be a path to an image in the `public/` directory. */
@@ -37,12 +37,31 @@ export const theme: ThemeUserConfig = {
 
   // Still in test
   head: [
-    /* Telegram channel */
-    // {
-    //   tag: 'meta',
-    //   attrs: { name: 'telegram:channel', content: '@cworld0_cn' },
-    //   content: ''
-    // }
+    {
+      tag: 'meta',
+      attrs: { property: 'og:image', content: '/images/social-card.png' }
+    },
+    {
+      tag: 'meta',
+      attrs: { property: 'og:image:width', content: '1200' }
+    },
+    {
+      tag: 'meta',
+      attrs: { property: 'og:image:height', content: '630' }
+    },
+    {
+      tag: 'meta',
+      attrs: { property: 'og:image:alt', content: 'Pipitone Labs - Cloud Engineering & DevOps' }
+    },
+    // Twitter meta tags for social sharing
+    {
+      tag: 'meta',
+      attrs: { name: 'twitter:image', content: '/images/social-card.png' }
+    },
+    {
+      tag: 'meta',
+      attrs: { name: 'twitter:image:alt', content: 'Pipitone Labs - Cloud Engineering & DevOps' }
+    }
   ],
   customCss: [],
 
@@ -52,7 +71,6 @@ export const theme: ThemeUserConfig = {
       { title: 'Blog', link: '/blog' },
       { title: 'Docs', link: '/docs' },
       { title: 'Projects', link: '/projects' },
-      { title: 'Links', link: '/links' },
       { title: 'About', link: '/about' }
     ]
   },
@@ -63,17 +81,6 @@ export const theme: ThemeUserConfig = {
     year: `© ${new Date().getFullYear()}`,
     // year: `© 2019 - ${new Date().getFullYear()}`,
     links: [
-      // Registration link
-      {
-        title: 'Moe ICP 114514',
-        link: 'https://icp.gov.moe/?keyword=114514',
-        style: 'text-sm' // Uno/TW CSS class
-      },
-      {
-        title: 'Travelling',
-        link: 'https://www.travellings.cn/go.html',
-        style: 'text-sm'
-      },
       // Privacy Policy link
       {
         title: 'Site Policy',
@@ -99,7 +106,7 @@ export const theme: ThemeUserConfig = {
     /** Blog page size for pagination (optional) */
     blogPageSize: 8,
     // Currently support weibo, x, bluesky
-    share: ['weibo', 'x', 'bluesky']
+    share: ['x']
   }
 }
 
@@ -161,23 +168,30 @@ export const integ: IntegrationUserConfig = {
     }
   },
   // Comment system
-  waline: {
+  giscus: {
     enable: true,
-    // Server service link
-    server: 'https://astro-theme-pure-waline.arthals.ink/',
-    // Refer https://waline.js.org/en/guide/features/emoji.html
-    emoji: ['bmoji', 'weibo'],
-    // Refer https://waline.js.org/en/reference/client/props.html
-    additionalConfigs: {
-      // search: false,
-      pageview: true,
-      comment: true,
-      locale: {
-        reaction0: 'Like',
-        placeholder: 'Welcome to comment. (Email to receive replies. Login is unnecessary)'
-      },
-      imageUploader: false
-    }
+    // GitHub repository for comments (format: owner/repo)
+    repo: 'pipitonelabs/blogv2',
+    // Repository ID
+    repoId: 'R_kgDOQc1RCw',
+    // Discussion category
+    category: 'Comments',
+    // Category ID
+    categoryId: 'DIC_kwDOQc1RC84CzFmp',
+    // Mapping between the page and the discussion
+    mapping: 'pathname',
+    // Reactions enabled
+    reactionsEnabled: true,
+    // Emit metadata
+    emitMetadata: false,
+    // Input position
+    inputPosition: 'top',
+    // Theme
+    theme: 'dark',
+    // Language
+    lang: 'en',
+    // Strict loading mode
+    strict: 0
   }
 }
 
