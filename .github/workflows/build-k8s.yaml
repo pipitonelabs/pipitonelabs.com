@@ -7,14 +7,13 @@ on:
 
 env:
   REGISTRY: ghcr.io/${{ github.repository_owner }}
-  IMAGE_NAME: pipitonelabs
+  IMAGE_NAME: blogv2
 
 permissions:
   contents: write
   packages: write
   issues: write
   pull-requests: write
-  id-token: write
 
 jobs:
   release:
@@ -39,11 +38,8 @@ jobs:
         with:
           semantic_version: 25.0.2
           extra_plugins: |
-            @semantic-release/commit-analyzer
-            @semantic-release/release-notes-generator
-            @semantic-release/changelog
-            @semantic-release/github
             @semantic-release/git
+            @semantic-release/changelog
             conventional-changelog-conventionalcommits
 
   build-and-push:
