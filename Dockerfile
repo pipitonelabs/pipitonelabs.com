@@ -42,12 +42,8 @@ COPY --from=build /app/dist ./
 # Copy node_modules from build stage
 COPY --from=build /app/node_modules ./node_modules/
 
-# Copy package files for Sharp rebuild
-COPY --from=build /app/package.json ./
-
-# Remove Debian Sharp binaries and reinstall for Alpine
-RUN rm -rf node_modules/sharp && \
-    npm install --no-save sharp
+# Rebuild Sharp for Alpine (rebuilds native binaries for current platform)
+RUN npm rebuild sharp
 
 # Expose port 4321
 EXPOSE 4321
