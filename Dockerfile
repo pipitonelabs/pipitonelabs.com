@@ -18,10 +18,10 @@ COPY . .
 
 # Modify astro.config.ts to use Node adapter instead of Vercel
 # Also use passthrough image service (outputs direct image URLs, no /_image endpoint needed)
-RUN sed -i '1a import node from "@astrojs/node";' astro.config.ts && \
-    sed -i "1a import { passthroughImageService } from 'astro/config';" astro.config.ts && \
-    sed -i 's/adapter: vercel(),/adapter: node({ mode: "standalone" }),/' astro.config.ts && \
-    sed -i 's/service: {/service: passthroughImageService(), _disabled: {/' astro.config.ts
+RUN sed -i '1i import node from "@astrojs/node";' astro.config.ts && \
+    sed -i '1i import { passthroughImageService } from "astro/assets/services/passthrough";' astro.config.ts && \
+    sed -i 's/adapter: vercel().*/adapter: node({ mode: "standalone" }),/' astro.config.ts && \
+    sed -i '0,/service:[^,}]*/s//    service: passthroughImageService()/' astro.config.ts
 
 # Build the application
 RUN bun run build
