@@ -1,3 +1,9 @@
+## [1.0.19](https://github.com/pipitonelabs/pipitonelabs.com/compare/v1.0.18...v1.0.19) (2025-12-01)
+
+### 🐛 Bug Fixes
+
+* dockerignore, dockerfile updates ([c8bbbf8](https://github.com/pipitonelabs/pipitonelabs.com/commit/c8bbbf8a391a68048d99fd72163cc9f77b81687b))
+
 ## [1.0.18](https://github.com/pipitonelabs/pipitonelabs.com/compare/v1.0.17...v1.0.18) (2025-12-01)
 
 ### 🐛 Bug Fixes
