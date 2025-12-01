@@ -1,6 +1,5 @@
 ---
 import { Image } from 'astro:assets'
-import avatarImage from '@/assets/avatar.png'
 
 //import { Quote } from 'astro-pure/advanced'
 import { PostPreview } from 'astro-pure/components/pages'
@@ -19,13 +18,23 @@ const platforms = ['AWS', 'Azure', 'Kubernetes', 'Docker', 'Talos Linux', 'Ubunt
 const MAX_POSTS = 10
 const allPosts = await getBlogCollection()
 const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
+
+const imagePath = config.logo.src
+const images = import.meta.glob<{ default: ImageMetadata }>(
+  '/src/assets/*.{jpeg,jpg,png,gif,avif,webp}'
+)
+if (!images[imagePath])
+  throw new Error(
+    `"${imagePath}" does not exist in glob: "src/assets/*.{jpeg,jpg,png,gif,avif,webp}"`
+  )
+
 ---
 
 <PageLayout meta={{ title: 'Home' }} highlightColor='#659EB9'>
   <main class='flex w-full flex-col items-center'>
     <section class='animate mb-10 flex flex-col items-center gap-y-7' id='content-header'>
       <Image
-        src={avatarImage}
+        src={images[imagePath]()}
         alt={config.logo.alt || 'Logo'}
         class='h-28 w-auto rounded-full border p-1'
         loading='eager'

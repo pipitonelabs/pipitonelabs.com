@@ -28,6 +28,15 @@ FROM node:18-alpine
 
 WORKDIR /app
 
+# Install Sharp dependencies for Alpine
+RUN apk add --no-cache \
+    vips-dev \
+    fftw-dev \
+    gcc \
+    g++ \
+    make \
+    libc6-compat
+
 # Copy built application and dependencies from build stage
 COPY --from=build /app/dist ./
 COPY --from=build /app/node_modules ./node_modules/
@@ -37,6 +46,7 @@ EXPOSE 4321
 
 # Enable debug logging for image processing
 ENV NODE_ENV=development
+ENV DEBUG=astro:assets
 
 # Start the server
 CMD ["node", "server/entry.mjs"]
