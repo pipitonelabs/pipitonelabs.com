@@ -1,3 +1,9 @@
+## [1.0.4](https://github.com/pipitonelabs/pipitonelabs.com/compare/v1.0.3...v1.0.4) (2025-12-01)
+
+### 🐛 Bug Fixes
+
+* favicons, new blog post ([701f2c6](https://github.com/pipitonelabs/pipitonelabs.com/commit/701f2c62393d0206062df5ad4fee86c675a3880b))
+
 ## [1.0.3](https://github.com/pipitonelabs/pipitonelabs.com/compare/v1.0.2...v1.0.3) (2025-11-30)
 
 ### 🐛 Bug Fixes
