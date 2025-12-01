@@ -1,3 +1,9 @@
+## [1.0.7](https://github.com/pipitonelabs/pipitonelabs.com/compare/v1.0.6...v1.0.7) (2025-12-01)
+
+### 🐛 Bug Fixes
+
+* Dockerfile for debugging ([8a11a9c](https://github.com/pipitonelabs/pipitonelabs.com/commit/8a11a9ce51558a70899245c2da7c80c405f48cac))
+
 ## [1.0.6](https://github.com/pipitonelabs/pipitonelabs.com/compare/v1.0.5...v1.0.6) (2025-12-01)
 
 ### 🐛 Bug Fixes
