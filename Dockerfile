@@ -32,21 +32,27 @@ WORKDIR /app
 RUN apk add --no-cache \
     vips-dev \
     fftw-dev \
-    gcc \
-    g++ \
-    make \
-    libc6-compat
+    build-base \
+    libc6-compat \
+    python3
 
-# Copy built application and dependencies from build stage
+# Copy built application from build stage
 COPY --from=build /app/dist ./
-COPY --from=build /app/node_modules ./node_modules/
+
+# Copy package.json for reinstalling sharp
+COPY --from=build /app/package.json ./
+
+# Reinstall Sharp for Alpine (critical - Debian binaries don't work on Alpine)
+RUN npm install sharp --platform=linuxmusl --arch=x64
 
 # Expose port 4321
 EXPOSE 4321
 
-# Enable debug logging for image processing
+# Enable verbose debug logging for image processing issues
 ENV NODE_ENV=development
-ENV DEBUG=astro:assets
+ENV DEBUG=*
+ENV NODE_DEBUG=module,http
+ENV NODE_OPTIONS="--trace-warnings --unhandled-rejections=strict"
 
-# Start the server
-CMD ["node", "server/entry.mjs"]
+# Start the server with error logging wrapper
+CMD ["sh", "-c", "node server/entry.mjs 2>&1 | tee /dev/stderr"]
