@@ -35,5 +35,8 @@ COPY --from=build /app/node_modules ./node_modules/
 # Expose port 4321
 EXPOSE 4321
 
+# Enable debug logging for image processing
+ENV NODE_ENV=development
+
 # Start the server
 CMD ["node", "server/entry.mjs"]

@@ -78,7 +78,7 @@ The multi-stage [Dockerfile](https://github.com/pipitonelabs/pipitonelabs.com/bl
 
 ### Adapter Switch Deep Dive
 
-```dockerfile
+```dockerfile title="Dockerfile"
 RUN sed -i '1a import node from "@astrojs/node";' astro.config.ts && \
     sed -i 's/adapter: vercel(),/adapter: node({ mode: "standalone" }),/' astro.config.ts
 ```
@@ -106,7 +106,7 @@ This sed command ensures genuine portability while keeping the repository histor
 
 **Issue**: `import.meta.glob` failed in Node adapter:
 
-```javascript
+```javascript title="index.astro"
 // ❌ Runtime glob fails in Node
 const images = import.meta.glob('/src/assets/*.{png}')
 <Image src={images[path]()} />
@@ -114,7 +114,7 @@ const images = import.meta.glob('/src/assets/*.{png}')
 
 **Fix**: Static import:
 
-```javascript
+```javascript title="index.astro"
 // ✅ Build-time resolution
 import avatarImage from '@/assets/avatar.png'
 <Image src={avatarImage} />
@@ -152,7 +152,7 @@ For deployment, I use Flux's HelmRelease powered by the [bjw-s-labs/app-template
 
 The HelmRelease specifies the image tag (updated manually or via automation):
 
-```yaml
+```yaml title="helmrelease.yaml"
 containers:
   main:
     image:
@@ -170,7 +170,7 @@ Getting the blog accessible from the internet involves several layers:
 
 The HelmRelease configures the route directly:
 
-```yaml
+```yaml title="helmrelease.yaml"
 # Continued from HelmRelease above
   route:
     app:
