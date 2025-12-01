@@ -1,3 +1,9 @@
+## [1.0.14](https://github.com/pipitonelabs/pipitonelabs.com/compare/v1.0.13...v1.0.14) (2025-12-01)
+
+### 🐛 Bug Fixes
+
+* added NODE_ENV to Dockerfile ([b99a04e](https://github.com/pipitonelabs/pipitonelabs.com/commit/b99a04e2062b7b7b468f4e061a34c32f63a4e790))
+
 ## [1.0.13](https://github.com/pipitonelabs/pipitonelabs.com/compare/v1.0.12...v1.0.13) (2025-12-01)
 
 ### 🐛 Bug Fixes
