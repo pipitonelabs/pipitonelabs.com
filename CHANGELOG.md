@@ -1,3 +1,9 @@
+## [1.0.18](https://github.com/pipitonelabs/pipitonelabs.com/compare/v1.0.17...v1.0.18) (2025-12-01)
+
+### 🐛 Bug Fixes
+
+* Dockerfile caching test ([66891b0](https://github.com/pipitonelabs/pipitonelabs.com/commit/66891b08bc71e291bf382f58802f4db5653c980f))
+
 ## [1.0.17](https://github.com/pipitonelabs/pipitonelabs.com/compare/v1.0.16...v1.0.17) (2025-12-01)
 
 ### 🐛 Bug Fixes
