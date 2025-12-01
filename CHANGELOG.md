@@ -1,3 +1,9 @@
+## [1.0.16](https://github.com/pipitonelabs/pipitonelabs.com/compare/v1.0.15...v1.0.16) (2025-12-01)
+
+### 🐛 Bug Fixes
+
+* Dockerfile experiment ([adb8b12](https://github.com/pipitonelabs/pipitonelabs.com/commit/adb8b127a7c1e533e66bcd0e54e7fd1f97a915a0))
+
 ## [1.0.15](https://github.com/pipitonelabs/pipitonelabs.com/compare/v1.0.14...v1.0.15) (2025-12-01)
 
 ### 🐛 Bug Fixes
