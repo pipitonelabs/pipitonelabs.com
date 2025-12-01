@@ -1,3 +1,9 @@
+## [1.0.12](https://github.com/pipitonelabs/pipitonelabs.com/compare/v1.0.11...v1.0.12) (2025-12-01)
+
+### 🐛 Bug Fixes
+
+* Dockerfile updates again ([9457952](https://github.com/pipitonelabs/pipitonelabs.com/commit/94579528ddf3672beab7becb14fc7f3ce7312833))
+
 ## [1.0.11](https://github.com/pipitonelabs/pipitonelabs.com/compare/v1.0.10...v1.0.11) (2025-12-01)
 
 ### 🐛 Bug Fixes
