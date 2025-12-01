@@ -17,11 +17,8 @@ RUN bun add @astrojs/node
 COPY . .
 
 # Modify astro.config.ts to use Node adapter instead of Vercel
-# Also use passthrough image service (outputs direct image URLs, no /_image endpoint needed)
-RUN sed -i '1i import node from "@astrojs/node";' astro.config.ts && \
-    sed -i '1i import { passthroughImageService } from "astro/assets/services/passthrough";' astro.config.ts && \
-    sed -i 's/adapter: vercel().*/adapter: node({ mode: "standalone" }),/' astro.config.ts && \
-    sed -i '0,/service:[^,}]*/s//    service: passthroughImageService()/' astro.config.ts
+RUN sed -i '1a import node from "@astrojs/node";' astro.config.ts && \
+    sed -i 's/adapter: vercel(),/adapter: node({ mode: "standalone" }),/' astro.config.ts
 
 # Build the application
 RUN bun run build
@@ -31,19 +28,12 @@ FROM node:18-alpine
 
 WORKDIR /app
 
-# Minimal dependencies (no Sharp needed with passthrough image service)
-RUN apk add --no-cache libc6-compat
-
-# Copy built application from build stage
+# Copy built application and dependencies from build stage
 COPY --from=build /app/dist ./
-
-# Copy node_modules from build stage
 COPY --from=build /app/node_modules ./node_modules/
 
 # Expose port 4321
 EXPOSE 4321
-
-ENV NODE_ENV=production
 
 # Start the server
 CMD ["node", "server/entry.mjs"]
