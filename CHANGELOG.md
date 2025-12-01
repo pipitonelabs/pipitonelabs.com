@@ -1,3 +1,9 @@
+## [1.0.15](https://github.com/pipitonelabs/pipitonelabs.com/compare/v1.0.14...v1.0.15) (2025-12-01)
+
+### 🐛 Bug Fixes
+
+* image fix ([f706d31](https://github.com/pipitonelabs/pipitonelabs.com/commit/f706d31743a752ae5acc436dffc3917eac70d831))
+
 ## [1.0.14](https://github.com/pipitonelabs/pipitonelabs.com/compare/v1.0.13...v1.0.14) (2025-12-01)
 
 ### 🐛 Bug Fixes
