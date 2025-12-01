@@ -16,7 +16,9 @@ draft: true
 enableComment: true
 ---
 
-Running a personal blog in a self-hosted Kubernetes cluster has been an exciting journey. It combines the power of modern DevOps practices with the control of managing your own infrastructure. In this post, I'll walk you through how I set up continuous deployment for my Astro-based blog, from code commits to public access via `blog.pipitonelabs.com`. At the moment, this is an experiment to learn how to containerize this application with Node, as the production site is still running on Vercel at `pipitonelabs.com`.
+Deploying this Astro-based blog to a self-hosted Kubernetes cluster has been a fascinating deep dive into understanding how modern web frameworks actually work under the hood. What started as wanting to containerize a simple blog became an exploration of Astro's TypeScript integration and server-side rendering capabilities. As I've discovered, Astro's flexibility with different adapters (from Vercel's serverless functions to standalone Node.js) reveals how frameworks give developers the choice to control their deployment strategy. 
+
+In this post, I'll walk you through my continuous deployment setup from code commits to public access via `blog.pipitonelabs.com`, and how I was able to get the solution to function in a containerized environment.
 
 GitHub Actions builds container images which my homelab Kubernetes cluster then pulls, deploys, updates, and exposes securely. Here's the high-level flow:
 
@@ -25,11 +27,9 @@ GitHub Actions builds container images which my homelab Kubernetes cluster then 
 3. **Deployment**: Flux (via HelmRelease) deploys new images automatically.
 4. **Networking**: External-DNS creates DNS records, Envoy Gateway exposes the service, and Cloudflare Tunnel secures external access.
 
-Let's dive into each component.
-
 ## Continuous Integration with GitHub Actions
 
-The heart of my CI/CD pipeline is the `build-k8s.yaml` GitHub Actions workflow. It uses semantic versioning to create releases based on commit messages.
+The heart of my CI/CD pipeline is the [build-k8s.yaml](https://github.com/pipitonelabs/pipitonelabs.com/blob/main/.github/workflows/build-k8s.yaml) GitHub Actions workflow. It uses semantic versioning to create releases based on commit messages, and builds & pushes the package to my GitHub container registry. There's some additional logic to add release details, depending on the commit type.
 
 ### Key Features:
 - **Semantic Release**: Analyzes commit messages (e.g., `feat:`, `fix:`) to determine version bumps. Configured in [.releaserc.json](https://github.com/pipitonelabs/pipitonelabs.com/blob/main/.releaserc.json).
@@ -64,209 +64,163 @@ jobs:
 
 This ensures only meaningful changes trigger new deployments, reducing unnecessary builds.
 
-## Docker Build Details
+## My Dockerfile Journey: From Slow Builds to Lightning-Fast Caching
 
-The optimized multi-stage [Dockerfile](https://github.com/pipitonelabs/pipitonelabs.com/blob/main/Dockerfile) enables **dual-deployment** with intelligent layer caching for faster builds.
+When I first started containerizing my Astro blog, my builds were taking forever - probably 5+ minutes every time I made a tiny change to a file, or a blog post. That's when I realized I needed to understand how Docker caching actually works.
 
-### Multi-Stage Build Architecture
+### Why Order Matters
 
-```
-Base Stage (System deps)
-    ↓
-Dependencies Stage (npm packages)  
-    ↓
-Build Stage (Source code + Astro build)
-    ↓
-Runtime Stage (Alpine with Sharp runtime)
-```
+Docker layers are like a stack of pancakes. Each instruction adds a new layer on top, and Docker is pretty smart about reusing layers when nothing has changed above them. But if you change something near the top, everything below gets rebuilt.
 
-**Build Flow**:
-1. **Base**: Install Sharp dependencies (`python3`, `build-essential`, `libvips-dev`)
-2. **Dependencies**: `bun install` with package files only
-3. **Build**: Copy source code, switch adapter, run `bun run build`
-4. **Runtime**: Alpine Node with Sharp runtime (`vips`)
+So I started with this simple question: "What changes most rarely in my project?"
 
-### Critical Docker Commands for Sharp
+The answer was obvious:
+1. **Base system stuff** (Node, build tools) - rarely changes
+2. **Dependencies** (package.json, bun.lock) - changes occasionally 
+3. **My actual code** - changes constantly
 
-These commands are essential for Sharp image processing:
+By structuring my Dockerfile around this reality, I went from 5-minute rebuilds to 30-second builds for most changes. It sounds simple, but this insight completely transformed my workflow.
 
-```dockerfile title="Sharp System Dependencies"
-# Base stage - build dependencies
-RUN apt-get update && apt-get install -y \
-    python3         # Required for Sharp compilation
-    build-essential # C++ compiler for native modules
-    libvips-dev     # Sharp's underlying image library
-    && rm -rf /var/lib/apt/lists/*
+### The Build Stages Breakdown
 
-# Configure Sharp environment
-ENV SHARP_IGNORE_GLOBAL_LIBVIPS=1
+Think of my Dockerfile as having four distinct stages, each serving a specific purpose:
 
-# Runtime stage - runtime dependencies
-RUN apk add --no-cache vips  # Alpine package for libvips
-```
+**Base Stage**: This is where I install all the heavy lifting stuff that rarely changes - the Python and build tools needed for Sharp (my image processing library). Once this builds, it stays cached for weeks.
 
-### Adapter Switch Deep Dive
+**Dependencies Stage**: I copy just the package files first (`package.json`, `bun.lock`) and run `bun install`. This means when I update a dependency, only this stage and everything after it rebuilds.
 
-```dockerfile title="Dockerfile"
-# Insert Node adapter import at line 2
+**Build Stage**: This is where the magic happens - I copy in all my source code, modify the Astro config for Kubernetes (more on that in a sec), and run the build. This stage rebuilds most frequently but is still pretty fast.
+
+**Runtime Stage**: This creates the final, lean image with just Alpine Linux and the essential runtime files. Small, secure, and production-ready.
+
+### The Performance Numbers Don't Lie
+
+| What I Changed          | Before Optimization | After Caching |
+|----------------------|----------------------|---------------|
+| A CSS tweak          | Full rebuild (5m)    | 30 seconds    |
+| New npm package      | Full rebuild (5m)    | 1 minute      |
+| Base image update    | Full rebuild         | Full rebuild  |
+
+### The Tweaks That Made Everything Click
+
+**Sharp (Image Processing) Was a Beast**
+Sharp needed some serious build tools during compilation, but only needed the lightweight runtime library later. So I split this across stages - build tools in the base stage, runtime `vips` in the final stage. The `SHARP_IGNORE_GLOBAL_LIBVIPS=1` environment variable was a game-changer too - it tells Sharp to use its own bundled libraries instead of fighting with system versions.
+
+**The Adapter Switch Trick**
+Here's something I'm pretty proud of. My blog uses Vercel's adapter locally (for easy development), but I needed to switch to a standalone Node adapter for Kubernetes. Instead of maintaining two different config files, I used a clever sed command during the build:
+
+```dockerfile
 RUN sed -i '2a import node from "@astrojs/node";' astro.config.ts && \
-    # Replace Vercel adapter with Node standalone
-    sed -i 's/adapter: vercel(),/adapter: node({ mode: "standalone" }),/' astro.config.ts
+    sed -i 's/adapter: vercel(),/adapter: node({ mode: "standalone" }),/' astro.config.ts && \
+    bun add @astrojs/node
 ```
 
-### Adapter Switch Context
+This means one codebase works everywhere. No branches, no environment-specific configs, no headaches.
 
-**Vercel Adapter (`adapter: vercel()`)**:
-- Serverless functions on edge runtime
-- Automatic scaling, cold starts OK for previews
+**Security Didn't Feel Like a Burden**
+I built security into the process instead of bolting it on at the end. The `.dockerignore` file keeps sensitive stuff out of the build (no accidentally copying `.env` files or git history), and the final stage runs as a non-root user. Kubernetes enforces this further with pod security contexts.
 
-**Node Standalone (`adapter: node({ mode: 'standalone' })`)**:
-- Single Node.js executable
-- Docker/k8s native, no cold starts, full control
+The result? A 90% reduction in build times, smaller images, and a setup that's actually secure by default.
 
-**Why Switch?**
-- Vercel: Development/preview deployments
-- Node: Production Kubernetes
-- Single codebase, runtime-specific optimization
 
-This sed command ensures genuine portability while keeping the repository history perfectly aligned across all environments — no branch divergence, no extra commits.
+## Additional Production Hardening
 
-**Effect**: Serverless functions → single Node executable for Kubernetes.
+In addition to the Dockerfile's built-in security (non-root user, `.dockerignore`), Kubernetes PodSecurityContext enforces:
 
-### avatar.png Static Import Fix
-
-**Issue**: `import.meta.glob` failed in Node adapter:
-
-```javascript title="index.astro"
-// ❌ Runtime glob fails in Node
-const images = import.meta.glob('/src/assets/*.{png}')
-<Image src={images[path]()} />
+```yaml title="Pod Security Context"
+securityContext:
+  runAsNonRoot: true
+  runAsUser: 1001
+  runAsGroup: 1001
+  fsGroup: 1001
+  seccompProfile:
+    type: RuntimeDefault
 ```
 
-**Fix**: Static import:
+Security should be a primary concern in production containerization. Here are the critical practices I've implemented:
 
-```javascript title="index.astro"
-// ✅ Build-time resolution
-import avatarImage from '@/assets/avatar.png'
-<Image src={avatarImage} />
+### .dockerignore File
+
+A `.dockerignore` file prevents unnecessary files from being copied into the build context, reducing image size and attack surface:
+
+```gitignore title=".dockerignore"
+# Dependencies and build artifacts
+node_modules/
+dist/
+.cache/
+
+# Environment and secrets
+.env*
+!.env.example
+
+# Git and CI/CD
+.git/
+.github/
+.gitlab-ci.yml
+
+# Documentation and development files
+README.md
+CHANGELOG.md
+.vscode/
+.prettierrc
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+*.swp
 ```
 
-**Why**: Vite glob is adapter-sensitive at runtime. Static imports are universal.
+**Benefits**:
+- **Faster builds** - Less data to transfer and process
+- **Smaller images** - Excludes unnecessary development files
+- **Security** - Prevents accidentally including secrets or sensitive files
 
-This makes the same code work for Vercel preview + k8s production.
+### Non-Root User Implementation
 
-## Optimized Docker Layer Caching
+Running containers as root is a security anti-pattern. The runtime stage creates a dedicated user:
 
-After experiencing slow build times, I optimized the Dockerfile with intelligent layer caching strategies to minimize rebuild times during development.
+```dockerfile title="Runtime Stage Security"
+FROM node:18-alpine
 
-### Layer Caching Strategy
+# Create non-root user before copying files
+RUN addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 astrojs
 
-The key principle is ordering Docker instructions from **least frequently changing** to **most frequently changing**:
+# Copy and set ownership
+COPY --from=build /app/dist ./dist
+COPY --from=build /app/node_modules ./node_modules/
+RUN chown -R astrojs:nodejs /app
 
-1. **Base Stage (Rarest Changes)**: System dependencies and Sharp libraries
-2. **Dependencies Stage (Package Files)**: npm/bun packages 
-3. **Build Stage (Source Code)**: Application code and build process
+# Switch to non-root user
+USER astrojs
 
-```dockerfile title="Dockerfile - Optimized Multi-Stage Build"
-# Base stage with system dependencies (cached layer)
-FROM oven/bun:1 AS base
-
-# Install Sharp system dependencies (cached across builds)
-RUN apt-get update && apt-get install -y \
-    python3 build-essential libvips-dev \
-    && rm -rf /var/lib/apt/lists/*
-
-# Configure Sharp to use bundled libvips
-ENV SHARP_IGNORE_GLOBAL_LIBVIPS=1
-
-# Dependencies stage (package files)
-FROM base AS deps
-
-# Copy package files first (leverages Docker layer caching)
-COPY package*.json bun.lock ./
-RUN bun install
-
-# Build stage (source code)
-FROM deps AS build
-COPY . .
-RUN bun run build
+# Application runs as astrojs user (uid 1001)
+CMD ["node", "dist/server/entry.mjs"]
 ```
 
-### Performance Impact
+**Security Benefits**:
+- **Principle of least privilege** - Container runs with minimal permissions
+- **Attack surface reduction** - Compromised process has limited system access
+- **Process isolation** - Each container has distinct user identity
 
-| Change Type | Before Optimization | After Optimization |
-|-------------|-------------------|-------------------|
-| **Source code changes** | Full rebuild (2-5 min) | Final stage only (~30 sec) |
-| **Dependency updates** | Full rebuild (2-5 min) | Dependencies stage only (~1 min) |
+### Container Security in Kubernetes
 
-## Sharp Image Processing: Critical Configuration
+Kubernetes enhances container security through additional layers:
 
-Sharp (the high-performance image processing library) requires specific system dependencies and configuration to work reliably in containerized environments.
-
-### System Dependencies
-
-Sharp needs **native libraries** for image processing:
-
-```bash
-# Build-time dependencies (for compiling native modules)
-python3        # Required for node-gyp compilation
-build-essential # C/C++ compiler toolchain  
-libvips-dev    # Sharp's underlying image library
-
-# Runtime dependencies (for executing Sharp)
-vips           # Alpine package for libvips runtime
+```yaml title="Pod Security Context"
+securityContext:
+  runAsNonRoot: true
+  runAsUser: 1001
+  runAsGroup: 1001
+  fsGroup: 1001
+  seccompProfile:
+    type: RuntimeDefault
 ```
 
-### Critical Sharp Commands
-
-These commands are essential for Sharp to function properly:
-
-```dockerfile title="Sharp Configuration Commands"
-# 1. Install build dependencies in build stage
-RUN apt-get update && apt-get install -y \
-    python3 build-essential libvips-dev
-
-# 2. Configure Sharp environment variable
-ENV SHARP_IGNORE_GLOBAL_LIBVIPS=1
-
-# 3. Install runtime dependencies in runtime stage  
-RUN apk add --no-cache vips
-```
-
-### Why SHARP_IGNORE_GLOBAL_LIBVIPS=1?
-
-This environment variable tells Sharp to **use its bundled version of libvips** instead of any system-installed version. This ensures:
-
-- **Consistent behavior** across different environments
-- **No conflicts** with system libvips versions
-- **Faster builds** since Sharp doesn't recompile
-- **Reliable image processing** regardless of host system
-
-### Common Sharp Issues in Docker
-
-| Issue | Cause | Solution |
-|-------|-------|----------|
-| `apk: not found` | Using Alpine commands on Debian base | Use `apt-get` for `oven/bun:1` |
-| `Cannot find module` | Wrong entry path in CMD | Use `dist/server/entry.mjs` |
-| Sharp build failures | Missing system dependencies | Install `python3 build-essential libvips-dev` |
-| Runtime errors | Missing libvips runtime | Add `ENV SHARP_IGNORE_GLOBAL_LIBVIPS=1` |
-
-### Testing Sharp in Docker
-
-To verify Sharp works correctly:
-
-```bash
-# Build the image
-docker build -t my-astro-app .
-
-# Run with port mapping
-docker run -p 4321:4321 my-astro-app
-
-# Test image processing endpoint
-curl -I http://localhost:4321
-```
-
-The Astro site uses Sharp automatically for optimized images through the `astro:assets` integration.
+This ensures the pod:
+- Cannot run as root (`runAsNonRoot: true`)
+- Uses the same user/group IDs as the container
+- Uses default seccomp profile for system call filtering
 
 ## Automated Dependency Management with Renovate
 

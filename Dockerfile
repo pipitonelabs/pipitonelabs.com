@@ -47,9 +47,19 @@ WORKDIR /app
 # Install Sharp runtime dependencies for Alpine
 RUN apk add --no-cache vips
 
+# Create non-root user for security (best practice)
+RUN addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 astrojs
+
 # Copy built application and dependencies from build stage
 COPY --from=build /app/dist ./dist
 COPY --from=build /app/node_modules ./node_modules/
+
+# Change ownership to non-root user
+RUN chown -R astrojs:nodejs /app
+
+# Switch to non-root user
+USER astrojs
 
 # Expose port 4321
 EXPOSE 4321

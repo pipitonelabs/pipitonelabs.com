@@ -1,0 +1,74 @@
+# Dependencies - never copy these
+node_modules/
+
+# Build outputs
+dist/
+.cache/
+.output/
+.vercel/
+.netlify/
+.astro/
+
+# Environment files (except examples)
+.env
+.env.*
+!.env.example
+
+# Git and version control
+.git/
+.gitignore
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# CI/CD (but keep workflows for some setups)
+.github/
+.gitlab-ci.yml
+.travis.yml
+.circleci
+
+# Documentation
+README.md
+CHANGELOG.md
+LICENSE
+docs/
+
+# Testing
+coverage/
+.nyc_output
+test/
+tests/
+*.test.js
+*.spec.js
+
+# Logs
+logs/
+*.log
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Package managers (keep bun.lock)
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Temporary folders
+tmp/
+temp/
