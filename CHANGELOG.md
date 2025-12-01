@@ -1,3 +1,9 @@
+## [1.0.9](https://github.com/pipitonelabs/pipitonelabs.com/compare/v1.0.8...v1.0.9) (2025-12-01)
+
+### 🐛 Bug Fixes
+
+* debugging more ([5208cc7](https://github.com/pipitonelabs/pipitonelabs.com/commit/5208cc7ef0b61c9c369066072093cec787c0cd17))
+
 ## [1.0.8](https://github.com/pipitonelabs/pipitonelabs.com/compare/v1.0.7...v1.0.8) (2025-12-01)
 
 ### 🐛 Bug Fixes
