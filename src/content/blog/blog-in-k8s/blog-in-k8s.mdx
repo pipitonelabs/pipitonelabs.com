@@ -1,7 +1,8 @@
 ---
-title: Deploying My Astro Blog in a Self-Hosted Kubernetes Homelab
-description: 'A comprehensive guide to deploying an Astro blog in a self-hosted Kubernetes homelab using GitHub Actions and Renovate.'
-publishDate: 2025-11-30
+title: Deploying My Astro Blog in a Self-Hosted Kubernetes HomeLab
+description: 'A comprehensive guide to deploying an Astro blog in a self-hosted Kubernetes HomeLab using GitHub Actions and Renovate.'
+publishDate: 2025-11-29
+updatedDate: 2025-11-30
 tags:
   - Kubernetes
   - Astro
@@ -10,15 +11,14 @@ tags:
   - Flux
   - DevOps
   - Homelab
-heroImage: { src: './kubernetes.svg', color: '#1567c5ff', width: 100, height: 100 }
-draft: true
+heroImage: { src: './k8s.png', color: '#1567c5ff' }
+draft: false
+enableComment: true
 ---
 
-Running a personal blog in a self-hosted Kubernetes cluster has been an exciting journey. It combines the power of modern DevOps practices with the control of managing your own infrastructure. In this post, I'll walk you through how I set up continuous deployment for my Astro-based blog, from code commits to public access via `blog.pipitonelabs.com`.
+Running a personal blog in a self-hosted Kubernetes cluster has been an exciting journey. It combines the power of modern DevOps practices with the control of managing your own infrastructure. In this post, I'll walk you through how I set up continuous deployment for my Astro-based blog, from code commits to public access via `blog.pipitonelabs.com`. At the moment, this is an experiment to learn how to containerize this application with Node, as the production site is still running on Vercel at `pipitonelabs.com`.
 
-## Overview of the Setup
-
-My homelab Kubernetes cluster handles the entire lifecycle: building container images, managing dependencies, deploying updates, and exposing the service securely. Here's the high-level flow:
+GitHub Actions builds container images which my homelab Kubernetes cluster then pulls, deploys, updates, and exposes securely. Here's the high-level flow:
 
 1. **Code Changes**: Push to the main branch triggers automated builds and releases.
 2. **Dependency Updates**: Renovate detects package updates and creates pull requests.
@@ -32,14 +32,23 @@ Let's dive into each component.
 The heart of my CI/CD pipeline is the `build-k8s.yaml` GitHub Actions workflow. It uses semantic versioning to create releases based on commit messages.
 
 ### Key Features:
-- **Semantic Release**: Analyzes commit messages (e.g., `feat:`, `fix:`) to determine version bumps. Configured in [.releaserc.json](/.releaserc.json).
-- **Docker Build**: Creates multi-platform images and pushes to GitHub Container Registry (GHCR) using the multi-stage [Dockerfile](Dockerfile).
+- **Semantic Release**: Analyzes commit messages (e.g., `feat:`, `fix:`) to determine version bumps. Configured in [.releaserc.json](https://github.com/pipitonelabs/pipitonelabs.com/blob/main/.releaserc.json).
+- **Docker Build**: Creates multi-platform images and pushes to GitHub Container Registry (GHCR) using the multi-stage [Dockerfile](https://github.com/pipitonelabs/pipitonelabs.com/blob/main/Dockerfile).
 - **Tagging Strategy**: Generates version tags like `v1.2.3`, `v1.2`, `v1`, and SHA-based tags for flexibility.
 
-The workflow runs on pushes to `main` or manual dispatch. It outputs image metadata for easy consumption by deployment tools.
+### Semantic Release in Action
 
-```yaml
-# From [.github/workflows/build-k8s.yaml](https://github.com/pipitonelabs/pipitonelabs.com/blob/main/.github/workflows/build-k8s.yaml)
+Semantic release analyzes conventional commit messages per [.releaserc.json](https://github.com/pipitonelabs/pipitonelabs.com/blob/main/.releaserc.json):
+
+| Commit | Example | Bump | Tags |
+|--------|---------|------|------|
+| feat | `feat: add dark mode` | minor | v1.2.0, v1.2, v1 |
+| fix/perf/revert/refactor | `fix: resolve login bug` | patch | v1.1.1, v1.1, v1 |
+| docs/style/chore/etc | `docs: update readme` | none | SHA only |
+
+The workflow runs on pushes to `main` or can be manually triggered. It outputs image metadata for easy consumption by deployment tools.
+
+```yaml title=".github/workflows/build-k8s.yaml"
 jobs:
   release:
     name: Semantic Release & Build Image
@@ -55,9 +64,69 @@ jobs:
 
 This ensures only meaningful changes trigger new deployments, reducing unnecessary builds.
 
+## Docker Build Details
+
+The multi-stage [Dockerfile](https://github.com/pipitonelabs/pipitonelabs.com/blob/main/Dockerfile) enables **dual-deployment** by switching from Vercel serverless to Node standalone during build.
+
+### Multi-Stage Build Flow
+
+1. **Bun Install**: Dependencies + local packages
+2. **Node Adapter**: `bun add @astrojs/node`
+3. **Config Switch**: sed replaces Vercel → Node standalone
+4. **Astro Build**: Creates server/entry.mjs
+5. **Runtime**: Alpine Node with dist + node_modules
+
+### Adapter Switch Deep Dive
+
+```dockerfile
+RUN sed -i '1a import node from "@astrojs/node";' astro.config.ts && \
+    sed -i 's/adapter: vercel(),/adapter: node({ mode: "standalone" }),/' astro.config.ts
+```
+
+### Adapter Switch Context
+
+**Vercel Adapter (`adapter: vercel()`)**:
+- Serverless functions on edge runtime
+- Automatic scaling, cold starts OK for previews
+
+**Node Standalone (`adapter: node({ mode: 'standalone' })`)**:
+- Single Node.js executable
+- Docker/k8s native, no cold starts, full control
+
+**Why Switch?**
+- Vercel: Development/preview deployments
+- Node: Production Kubernetes
+- Single codebase, runtime-specific optimization
+
+This sed command ensures genuine portability while keeping the repository history perfectly aligned across all environments — no branch divergence, no extra commits.
+
+**Effect**: Serverless functions → single Node executable for Kubernetes.
+
+### avatar.png Static Import Fix
+
+**Issue**: `import.meta.glob` failed in Node adapter:
+
+```javascript
+// ❌ Runtime glob fails in Node
+const images = import.meta.glob('/src/assets/*.{png}')
+<Image src={images[path]()} />
+```
+
+**Fix**: Static import:
+
+```javascript
+// ✅ Build-time resolution
+import avatarImage from '@/assets/avatar.png'
+<Image src={avatarImage} />
+```
+
+**Why**: Vite glob is adapter-sensitive at runtime. Static imports are universal.
+
+This makes the same code work for Vercel preview + k8s production.
+
 ## Automated Dependency Management with Renovate
 
-Keeping dependencies up-to-date is crucial for security and features. I use Renovate, configured via a GitHub Actions workflow (`renovate.yaml`), to automate this process.
+Keeping dependencies up-to-date is crucial for security and features. I use Renovate, configured via a GitHub Actions workflow [renovate.yaml](https://github.com/pipitonelabs/k8s-gitops/blob/main/.github/workflows/renovate.yaml), to automate this process.
 
 ### How It Works:
 - **Scheduled Runs**: Executes hourly to check for updates.
@@ -66,8 +135,7 @@ Keeping dependencies up-to-date is crucial for security and features. I use Reno
 
 The workflow uses a GitHub App for authentication, ensuring secure access without personal tokens.
 
-```yaml
-# From [.github/workflows/renovate.yaml](https://github.com/pipitonelabs/k8s-gitops/blob/main/.github/workflows/renovate.yaml)
+```yaml title=".github/workflows/renovate.yaml"
 - name: Run Renovate
   uses: renovatebot/github-action@03026bd55840025343414baec5d9337c5f9c7ea7 # v44.0.4
   env:
@@ -80,7 +148,7 @@ This setup keeps my blog current with the latest Astro, Node.js, and other depen
 
 ## Deployment with Helm and Flux
 
-For deployment, I use Flux's HelmRelease powered by the [bjw-s-labs/app-template](https://github.com/bjw-s-labs/helm-charts) chart. This replaces writing full custom Helm charts for every app with concise `values.yaml` files (50–150 lines). It leverages the mature `bjw-s/common` library for best practices like security contexts, probes, topology spread, Gateway API routes, and schema validation. A single chart upgrade propagates features and fixes across all my apps instantly, keeping my Git repo lean and drift-free.
+For deployment, I use Flux's HelmRelease powered by the [bjw-s-labs/app-template](https://github.com/bjw-s-labs/helm-charts) chart. This replaces writing full custom Helm charts for every app with concise `values.yaml` files (50-150 lines). It leverages the `bjw-s/common` library for best practices like security contexts, probes, Gateway API routes, and schema validation. A single chart upgrade propagates features and fixes across all my apps instantly, keeping my Git repo lean and drift-free.
 
 The HelmRelease specifies the image tag (updated manually or via automation):
 
@@ -116,7 +184,7 @@ The HelmRelease configures the route directly:
 External-DNS syncs the hostname to DNS, Envoy Gateway (via `envoy-external`) handles ingress routing, and Cloudflare Tunnel provides secure exposure without open ports.
 
 ### Envoy Gateway
-Acts as the ingress controller, routing external traffic to internal services. It supports advanced features like TLS termination and load balancing.
+Acts as the ingress controller built for the Gateway API, routing external traffic to internal services. It supports advanced features like TLS termination and load balancing.
 
 ### Cloudflare Tunnel
 Provides secure, encrypted tunnels from my homelab to Cloudflare's edge. This avoids exposing ports directly on my home network, enhancing security.
@@ -129,15 +197,6 @@ This setup demonstrates the power of combining open-source tools for a robust, a
 
 The beauty of Kubernetes in a homelab is the learning opportunity—it mirrors production environments while giving full control. If you're considering a similar setup, start small: get a basic deployment working, then layer on automation.
 
-Have you deployed personal projects in Kubernetes? I'd love to hear your experiences in the comments!
-
 ---
 
-## Next Steps
-
-If you'd like to replicate this setup:
-1. Add [.releaserc.json](/.releaserc.json) and [Dockerfile](Dockerfile), then set up semantic-release in your repo.
-2. Configure Flux in your cluster.
-3. Integrate External-DNS and Envoy Gateway.
-
-Check out the [repository](https://github.com/pipitonelabs/pipitonelabs.com) for full configs!
+*Have questions about the setup? Drop a comment below.*
