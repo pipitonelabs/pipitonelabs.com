@@ -1,3 +1,9 @@
+## [1.1.0](https://github.com/pipitonelabs/pipitonelabs.com/compare/v1.0.19...v1.1.0) (2025-12-01)
+
+### 🚀 Features
+
+* new blog post and version bump ([cbdccde](https://github.com/pipitonelabs/pipitonelabs.com/commit/cbdccde29674d4b19f11e2acc598fc7cb77fb3f6))
+
 ## [1.0.19](https://github.com/pipitonelabs/pipitonelabs.com/compare/v1.0.18...v1.0.19) (2025-12-01)
 
 ### 🐛 Bug Fixes
