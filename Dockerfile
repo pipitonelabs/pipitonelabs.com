@@ -39,11 +39,15 @@ RUN apk add --no-cache \
 # Copy built application from build stage
 COPY --from=build /app/dist ./
 
-# Copy package.json for reinstalling sharp
+# Copy node_modules from build stage
+COPY --from=build /app/node_modules ./node_modules/
+
+# Copy package files for Sharp rebuild
 COPY --from=build /app/package.json ./
 
-# Reinstall Sharp for Alpine (critical - Debian binaries don't work on Alpine)
-RUN npm install sharp --platform=linuxmusl --arch=x64
+# Remove Debian Sharp binaries and reinstall for Alpine
+RUN rm -rf node_modules/sharp && \
+    npm install --no-save sharp
 
 # Expose port 4321
 EXPOSE 4321
