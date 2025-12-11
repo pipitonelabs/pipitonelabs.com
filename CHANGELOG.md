@@ -1,3 +1,9 @@
+## [1.2.1](https://github.com/pipitonelabs/pipitonelabs.com/compare/v1.2.0...v1.2.1) (2025-12-11)
+
+### 🐛 Bug Fixes
+
+* improved Dockerfile and implemented env based adapter selection ([027cfc4](https://github.com/pipitonelabs/pipitonelabs.com/commit/027cfc4bf74aa548cb6265d5841f665a43e2c96d))
+
 ## [1.2.0](https://github.com/pipitonelabs/pipitonelabs.com/compare/v1.1.2...v1.2.0) (2025-12-11)
 
 ### 🚀 Features
