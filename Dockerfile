@@ -19,7 +19,7 @@ FROM base AS deps
 
 # Copy only package files first (leverages Docker layer caching)
 COPY package*.json bun.lock ./
-COPY packages/*/package.json ./packages/
+COPY packages/ ./packages/
 
 # Install dependencies (cached unless package files change)
 RUN bun install

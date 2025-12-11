@@ -120,16 +120,27 @@ const adapter = isDockerBuild ? node({ mode: 'standalone' }) : vercel()
 
 This approach is cleaner and more maintainable. The Dockerfile sets `BUILD_TARGET=docker` during the build stage, which automatically selects the Node adapter. For local development and Vercel deployments, the default Vercel adapter is used.
 
-I also updated the Dockerfile to only copy the package files instead of the entire packages directory:
+I also optimized the Docker build caching strategy using `.dockerignore` patterns:
 
 ```dockerfile title="Dockerfile"
 # Copy only package files first (leverages Docker layer caching)
 COPY package*.json bun.lock ./
+# Copy full packages directory (needed for workspace linking)
 COPY packages/ ./packages/
 
 # Set build target to use Node adapter instead of Vercel
 ENV BUILD_TARGET=docker
 ```
+
+```bash title=".dockerignore"
+# Optimization: exclude non-essential package files before dependency install
+# These will be copied in the final COPY . . but won't invalidate dependency cache
+packages/**/README.md
+packages/**/LICENSE
+packages/**/.npmignore
+```
+
+The workspace package `astro-pure` must be fully present during `bun install` for proper workspace linking and bin command resolution. Instead of trying to copy only `package.json` files (which breaks workspace functionality), I optimized the `.dockerignore` to exclude frequently-changing documentation files that don't affect dependencies. This means documentation updates won't invalidate the expensive dependency install cache layer.
 
 This means one codebase works everywhere. I'm able to:
 

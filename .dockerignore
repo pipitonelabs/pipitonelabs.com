@@ -72,3 +72,9 @@ pnpm-lock.yaml
 # Temporary folders
 tmp/
 temp/
+
+# Optimization: exclude non-essential package files before dependency install
+# These will be copied in the final COPY . . but won't invalidate dependency cache
+packages/**/README.md
+packages/**/LICENSE
+packages/**/.npmignore
