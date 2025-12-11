@@ -1,4 +1,5 @@
 import { rehypeHeadingIds } from '@astrojs/markdown-remark'
+import node from '@astrojs/node'
 import vercel from '@astrojs/vercel'
 import AstroPureIntegration from 'astro-pure'
 import { defineConfig, fontProviders } from 'astro/config'
@@ -19,6 +20,10 @@ import {
 } from './src/plugins/shiki-transformers.ts'
 import config from './src/site.config.ts'
 
+// Environment-based adapter selection for Vercel vs Docker/Kubernetes
+const isDockerBuild = process.env.BUILD_TARGET === 'docker'
+const adapter = isDockerBuild ? node({ mode: 'standalone' }) : vercel()
+
 // https://astro.build/config
 export default defineConfig({
   // Top-Level Options
@@ -27,17 +32,11 @@ export default defineConfig({
   // base: '/astro-pure/',
   trailingSlash: 'never',
 
-  // Adapter
-  // https://docs.astro.build/en/guides/deploy/
-  // 1. Vercel (serverless)
-  adapter: vercel(),
+  // Adapter - determined by BUILD_TARGET environment variable
+  // BUILD_TARGET=docker → @astrojs/node (standalone for K8s)
+  // Otherwise → @astrojs/vercel (for Vercel deployment)
+  adapter,
   output: 'server',
-  // 2. Vercel (static)
-  // adapter: vercelStatic(),
-  // 3. Local (standalone)
-  // adapter: node({ mode: 'standalone' }),
-  // output: 'server',
-  // ---
 
   image: {
     responsiveStyles: true,

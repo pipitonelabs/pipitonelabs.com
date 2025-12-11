@@ -34,6 +34,7 @@
     "typescript": "^5.9.3"
   },
   "devDependencies": {
+    "@astrojs/node": "^9.5.1",
     "@ianvs/prettier-plugin-sort-imports": "^4.7.0",
     "@typescript-eslint/parser": "^8.47.0",
     "eslint": "^9.39.1",

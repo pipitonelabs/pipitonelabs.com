@@ -8,6 +8,7 @@ RUN apt-get update && apt-get install -y \
     python3 \
     build-essential \
     libvips-dev \
+    git \
     && rm -rf /var/lib/apt/lists/*
 
 # Configure Sharp to use bundled libvips
@@ -29,12 +30,8 @@ FROM deps AS build
 # Copy remaining source code (after dependencies are installed)
 COPY . .
 
-# Modify astro.config.ts to use Node adapter instead of Vercel
-RUN sed -i '2a import node from "@astrojs/node";' astro.config.ts && \
-    sed -i 's/adapter: vercel(),/adapter: node({ mode: "standalone" }),/' astro.config.ts
-
-# Install @astrojs/node for standalone deployment
-RUN bun add @astrojs/node
+# Set build target to use Node adapter instead of Vercel
+ENV BUILD_TARGET=docker
 
 # Build the application
 RUN bun run build
