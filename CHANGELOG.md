@@ -1,3 +1,9 @@
+## [1.2.2](https://github.com/pipitonelabs/pipitonelabs.com/compare/v1.2.1...v1.2.2) (2025-12-11)
+
+### 🐛 Bug Fixes
+
+* updated k8s blog post and Dockerfile to optimize packages dir a bit ([24facd0](https://github.com/pipitonelabs/pipitonelabs.com/commit/24facd08f6f42b6d656a644a00a4dceeca27844a))
+
 ## [1.2.1](https://github.com/pipitonelabs/pipitonelabs.com/compare/v1.2.0...v1.2.1) (2025-12-11)
 
 ### 🐛 Bug Fixes
