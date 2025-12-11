@@ -1,3 +1,9 @@
+## [1.2.0](https://github.com/pipitonelabs/pipitonelabs.com/compare/v1.1.2...v1.2.0) (2025-12-11)
+
+### 🚀 Features
+
+* updated index.astro with certs ([b2d7aaf](https://github.com/pipitonelabs/pipitonelabs.com/commit/b2d7aaf7f247b34e63068346aca5ad32874449b3))
+
 ## [1.1.2](https://github.com/pipitonelabs/pipitonelabs.com/compare/v1.1.1...v1.1.2) (2025-12-01)
 
 ### 🐛 Bug Fixes
