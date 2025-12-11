@@ -2,7 +2,7 @@
 title: Deploying My Astro Blog in a Self-Hosted Kubernetes HomeLab
 description: 'A comprehensive guide to deploying an Astro blog in a self-hosted Kubernetes HomeLab using GitHub Actions and Renovate.'
 publishDate: 2025-11-29
-updatedDate: 2025-12-01
+updatedDate: 2025-12-11
 tags:
   - Kubernetes
   - Astro
@@ -110,12 +110,25 @@ For the life of me, I could not figure out why certain images that were being dy
 
 **The Adapter Switch Trick**
 
-Here's something I'm pretty proud of. My blog uses Vercel's adapter locally (for easy development), but I needed to switch to a standalone Node adapter for Kubernetes. Instead of maintaining two different config files, I used sed during the build:
+Here's something I'm pretty proud of. My blog uses Vercel's adapter locally (for easy development), but I needed to switch to a standalone Node adapter for Kubernetes. Instead of maintaining two different config files or using sed during the build (which was invalidating my cache), I implemented an environment-based approach:
+
+```typescript title="astro.config.ts"
+// Environment-based adapter selection for Vercel vs Docker/Kubernetes
+const isDockerBuild = process.env.BUILD_TARGET === 'docker'
+const adapter = isDockerBuild ? node({ mode: 'standalone' }) : vercel()
+```
+
+This approach is cleaner and more maintainable. The Dockerfile sets `BUILD_TARGET=docker` during the build stage, which automatically selects the Node adapter. For local development and Vercel deployments, the default Vercel adapter is used.
+
+I also updated the Dockerfile to only copy the package files instead of the entire packages directory:
 
 ```dockerfile title="Dockerfile"
-RUN sed -i '2a import node from "@astrojs/node";' astro.config.ts && \
-    sed -i 's/adapter: vercel(),/adapter: node({ mode: "standalone" }),/' astro.config.ts && \
-    bun add @astrojs/node
+# Copy only package files first (leverages Docker layer caching)
+COPY package*.json bun.lock ./
+COPY packages/ ./packages/
+
+# Set build target to use Node adapter instead of Vercel
+ENV BUILD_TARGET=docker
 ```
 
 This means one codebase works everywhere. I'm able to:
@@ -126,7 +139,7 @@ This means one codebase works everywhere. I'm able to:
 4. Next time Renovate runs, it creates a PR
 5. After the merge completes, the new image is deployed in my Kubernetes cluster
 
-That was a cool experiment and was extremely time consuming to figure out!
+The new approach is more efficient, maintains better cache utilization, and provides a cleaner separation of concerns.
 
 **Shift-Left Security**
 
