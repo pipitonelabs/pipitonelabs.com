@@ -1,150 +1,224 @@
 ---
-title: "Hands-On with Cline, Kilo Code, Claude Code and Antigravity"
-description: "Real-world testing of agentic agents like Cline, Kilo Code, Claude Code and Antigravity"
-publishDate: 2025-12-09
-updatedDate: 2025-12-09
+title: "Hands On with Cline & Kilo Code"
+description: "Testing of agentic agent extensions like Cline and Kilo Code."
+publishDate: 2025-12-11
+updatedDate: 2025-12-12
 tags:
   - AI
   - Agentic AI
   - Cline
-  - "Kilo Code"
-  - Antigravity
+  - Kilo Code
   - VSCode
   - IDE
 heroImage: { src: './agentic-ai.png', color: '#443da5ff' }
-draft: true
+draft: false
 enableComment: true
 ---
 
+import { Aside, Tabs, TabItem, Steps } from 'astro-pure/user'
+
 ## Introduction
 
-As a cloud engineer focused on leveling up my Kubernetes and modern DevOps expertise, I’m intentionally building real hands-on experience with agentic AI - autonomous agents that can reason step-by-step, orchestrate, and execute complex workflows with almost no hand-holding.
-I’m convinced that if I don't start actively using these tools, I’ll fall behind fast. 
+As a cloud engineer focused on leveling up my Kubernetes and modern DevOps skills, I'm intentionally building real hands-on experience with agentic AI - autonomous agents that can reason step-by-step, orchestrate, and execute complex workflows with almost no hand-holding.
+I'm convinced that if I don't start actively using these tools, I'll fall behind fast. 
 
-That’s why I’m experimenting with several different solutions and use cases, to see if I can incorporate them into my day-to-day, and if they improve my workflows. So far, it's been a great experience when it comes to managing my Kubernetes cluster in my HomeLab, and has been a big time saver. I've run a few personal experiments to learn (and move) even faster.
+That's why I'm experimenting with several different solutions and use cases, to see if I can incorporate them into my day-to-day, and if they improve my workflows. So far, it's been a great experience when it comes to managing my Kubernetes cluster in my HomeLab, and has been a big time saver. I've run a few personal experiments to learn (and move) even faster.
 
-This post shares real hands-on experience with three standout tools: the VSCode extensions **Cline**, **Kilo Code**, **Claude Code**, plus Google's brand-new **Antigravity** agentic IDE (launched November 2025). 
+I wanted to share my experience with two top tools: the VSCode extensions **Cline** and **Kilo Code**. 
 
-I tested them on different scenarios: Kubernetes disaster recovery planning, Terraform module refactoring, and custom development of various web apps. My evaluation focused on autonomy, accuracy, IDE and CLI integration, and cost.
+I tested them on different scenarios: Kubernetes app deployments and configurations, Terraform module refactoring, and custom development of various web apps. My testing focused on autonomy, accuracy, IDE and CLI integration, and cost.
+
+<Aside type='note'>
+While I'm really interested in using a single platform such as Claude Code because of what I've experienced using both Sonnet 4.5 and Opus 4.5, I really liked the flexibility of being able to use multiple models in Kilo Code as I had credits there already, which allowed me to switch back and forth between different models and different modes. At this time, I don't have a subscription to Claude Code, but that's next on my list to evaluate, and who knows, maybe it will be the direction I will head longer term. 
+</Aside>
 
 ## My Testing Process
 
 I have watched various YouTube videos of people who have done extreme benchmarking as well as extremely thorough test cases, which was a good starting point for me to get familiar with.
 
-What I realized is - like many other things - the only way to determine which tool is "best" is to get in there, and see for myself.
+What I realized is - like many other things - the only way to determine which tool is "best" is to get in there, and see for myself. Which one works best for me?
 
 Tasks by complexity:
 
 1. Simple → Lint/syntax fixes in YAML/Terraform.
-2. Medium → Multi-file refactors and modularization.
-3. Complex → Full architecture design + implementation (e.g., multi-region K8s DR).
+2. Medium → Multi-file refactors and Terraform modularization.
+3. Complex → Full architecture design + implementation.
 
-Criteria:
+What I’m really judging it on:
 
-- Autonomy → How few interventions?
-- Accuracy → Correct, complete, best-practice compliant?
-- Practicality → Production-ready or still prototype-grade?
-- Integration → Seamless in daily workflow?
-- Failure modes → Hallucinations, context loss, looping, recovery ease.
+1. How much do I have to babysit it?
+2. Are there lots of "API Request Failed" errors and how does it impact cost?
+3. Does the code it spits out actually work and follow best practices?
+4. Is the result something I can ship to prod?
+5. Does it fit smoothly into my normal day-to-day flow, or am I fighting the tool the whole time?
+6. When it screws up, does it hallucinate wildly, lose context, get stuck in loops, delete file content and how easy is it to get back on track?
 
-## Cline: The Original Autonomous VSCode Agent
+## Cline: Open-Source Coding Agent
 
-Cline (formerly Claude-Dev) was one of the first truly agentic VSCode extensions—open-source, human-in-the-loop, capable of reading/writing files, running terminal commands, browser automation, and multi-step reasoning.
+[Cline](https://cline.bot) is a pioneering open-source VS Code extension that acts as a true coding agent — it can read/write files, run terminal commands, control your browser, and handle complex multi-step tasks, always with human approval.
 
-**Strengths:**
-- Excellent at conversational, long-running tasks with strong context retention.
-- Safe by design (asks permission for every risky action).
-- Multimodal (can view screenshots/images).
-- Model-agnostic (works great with Claude Sonnet 4.5/Opus, Gemini, local models via Ollama/OpenRouter).
+**Strengths**  
+- Multimodal (understands screenshots and images)  
+- Configure it to use APIs of your choice, and supports OpenRouter, etc.  
+- Free options: various free models such as grok-code-fast-1, minimax-m2, devstral-2512 (at the time of this writing).
 
-**Weaknesses:**
-- Can be inconsistent on very large codebases.
-- Sometimes overconfident or loops on ambiguous prompts.
-- Setup requires API keys and occasional tweaking.
+**Weaknesses**  
+- Can struggle with very large codebases  
+- Occasionally overconfident or stuck in loops on vague prompts  
+- Requires API keys and minor setup/tweaking
+- Seems to only have **Plan** and **Act** modes
+- A bit more difficult to configure MCP servers
+- Doesn't support codebase indexing - but [that might not be a bad thing](https://cline.bot/blog/why-cline-doesnt-index-your-codebase-and-why-thats-a-good-thing)
 
-**Example**: "Design a multi-region DR strategy for production K8s including etcd backups, PV replication, and traffic failover."
+A powerful, flexible agent that still respects your control - one of the best open-source options available.
 
-Output: Detailed plan using Velero + snapshots, etcd-operator backups, Crossplane/GKE multi-cluster setup, Istio/Global Traffic Routing. It even created the initial YAML manifests and a restore playbook.
+**Example**: "Design and architect a modular solution written in terraform to provision a serverless solution in AWS ECS that is highly available and fault tolerant. This should use fargate and support blue/green deployments."
 
-Needed one follow-up for Velero bucket policies in secondary region. Overall, outstanding for planning.
+Output: Detailed plan containing an architecture overview, details on ECS Fargate, ALB, CodeDeploy, CloudWatch, and ASG. Additional details are provided related to the separate Terraform modules. Additional details on how the blue/green deployment flow works. Cline then presents me with "Would you like me to proceed with implementing this architecture, or would you prefer to discuss any modifications to the design first?"
 
-**Ideal for**: Brainstorming, architecture, exploratory work.
+## Kilo Code: A Newer Open-Source Coding Agent
 
-## Kilo Code: Precision Surgical Agent
+[Kilo Code](https://kilo.ai) is a polished, powerful open-source agentic extension for VS Code and JetBrains IDEs - a fork of Roo Code, which itself is a fork of Cline. It combines semantic codebase search, precise diff-based edits, terminal/browser automation, and multi-agent orchestration.
 
-Kilo Code (kilo.ai) is currently the most polished and powerful open-source agentic extension for VSCode/JetBrains. It combines semantic codebase search, precise diff-based edits, terminal/browser tools, and multi-agent orchestration in one package.
+**Strengths**  
+- Excellent codebase understanding with targeted, minimal edits  
+- Smooth tool chaining (search → read → plan → diff → test)  
+- **Architect Mode**  dedicated high-level planning: outlines project structure, recommends libraries, suggests modular architectures, and guides implementation strategy  
+- Strictly follows best practices with clear, well-documented outputs  
+- Model-agnostic: works with **Kilo Gateway** (its own API proxy with generous $20 bonus credits on first top-up), OpenRouter, or local setups  
+- Free options: lots of free options - I get emails about these frequently as models are released  
+- I am able to configure codebase indexing (I don't fully understand how this works yet)
 
-**Strengths:**
-- Superb codebase understanding and targeted edits (rarely touches unrelated files).
-- Excellent tool chaining (search → read → plan → diff → test loop).
-- Follows best practices religiously, great documentation in outputs.
-- Supports virtually any model via OpenRouter or local.
+**Weaknesses**  
+- Steeper learning curve for custom modes and rules  
+- Can be token-heavy on very large repositories  
+- I've been getting a lot of "API Request Failed" errors recently which is extremely frustrating as the API requests have costs associated 
 
-**Weaknesses:**
-- Steeper learning curve for custom modes/rules.
-- Can be token-hungry on massive repos.
-- Still asks for approval on big changes (which is good for safety).
+A versatile solution that takes the Cline foundation and pushes it further - especially for architecture-driven workflows.
 
-**Example**: "Refactor this monolithic EKS Terraform module into reusable child modules with proper versioning and best practices."
+It was relatively easy to deploy [Ollama](https://github.com/pipitonelabs/k8s-gitops/blob/main/kubernetes/apps/ai/ollama/app/helmrelease.yaml) and [Qdrant](https://github.com/pipitonelabs/k8s-gitops/blob/main/kubernetes/apps/ai/qdrant/app/helmrelease.yaml) in my Kubernetes cluster, so I setup indexing for testing purposes.
 
-It semantically searched the repo, split out VPC, IAM, node groups, addons; added locals/versioning; wrote READMEs; validated with tfvalidate/checkov. Result was cleaner than my manual version. Only minor tweak needed on output naming.
+**Custom Modes for Specialized Workflows**
 
-**Ideal for**: Heavy refactors, brownfield codebases, day-to-day engineering.
+I created these custom modes to complement the core modes (architect, code, ask, debug, orchestrator):
 
-## Google Antigravity: The New Agent-First IDE
+- **Documentation Specialist**: Writing and maintaining project documentation, README files, and API docs. Only edits markdown files to prevent accidental code changes.
 
-Launched just weeks ago (Nov 18, 2025), Antigravity is Google's bid to redefine the IDE for the Gemini 3 era. It's a standalone VSCode fork with two views: classic Editor (Copilot-like) and Agent Manager (dispatch multiple autonomous agents that work asynchronously across editor/terminal/browser).
+- **Test Engineer**: Writing tests, debugging test failures, and improving test coverage. Restricted to test files to maintain focus.
 
-**Strengths:**
-- Truly multi-model out of the box (Gemini 3 Pro default + Claude 4.5/Opus, Mistral, Llama 405B, etc.) — no API keys needed for most during preview.
-- Unique multi-agent orchestration: run 5+ agents in parallel on different tasks.
-- Artifacts system (plans, screenshots, browser recordings) makes progress verifiable.
-- Built-in browser control for end-to-end testing.
-- Completely free right now with generous limits.
+- **Frontend Specialist**: Building React, TypeScript, CSS components, styling, and frontend logic. Limited to frontend files to avoid backend concerns.
 
-**Weaknesses (it's brand new):**
-- Early bugs: occasional context loss on model switches, slow artifact generation, crashes on very large monorepos.
-- Less mature extension ecosystem than VSCode.
-- Slight Google/Gemini bias in defaults.
+- **Code Reviewer**: Analyzing code for reviews, security audits, or learning. No edit permissions ensure you can't accidentally modify anything.
 
-**Example**: Building a Kubernetes Operator in Go.
+### Mode Definitions and Usage
 
-I dispatched three agents simultaneously:
-- Gemini 3 Pro → CRD + manager scaffold.
-- Claude Opus 4.5 → Reconciliation logic + RBAC.
-- Mistral Large → Unit tests + debugging.
+Here's how I configured these modes in the Kilo Code extension:
 
-They coordinated via the shared knowledge base, produced verifiable artifacts, and ran `make test` loops autonomously. Final code passed operator-sdk score 95+. Still needed human review for edge cases.
+<Steps>
 
-**Ideal for**: Large-scale, parallelized development; experimenting with model ensembles.
+1. Documentation Specialist
 
-## Comparison Table
+   **Role Definition**: You are a technical writing expert specializing in clear, comprehensive documentation. You excel at explaining complex concepts simply and creating well-structured docs.
 
-| Aspect              | Cline                  | Kilo Code                | Antigravity                  |
-|---------------------|------------------------|--------------------------|------------------------------|
-| Primary Focus       | Conversational autonomy / planning | Precise codebase surgery / refactoring | Multi-agent orchestration / full IDE |
-| Best Tasks          | Architecture, brainstorming | Targeted edits, brownfield work | Parallel complex projects, e2e flows |
-| Autonomy Level      | High (human-in-loop)   | Very high (approval-based) | Highest (async multi-agent)  |
-| Multi-Model         | Yes (any via provider) | Yes (OpenRouter/local)   | Native (Gemini/Claude/Mistral/Llama etc.) |
-| VSCode Native       | Yes                    | Yes                      | No (standalone VSCode fork)  |
-| Cost (Dec 2025)     | API usage              | API usage                | Free preview (generous limits) |
-| Maturity / Stability| Mature                 | Very mature              | Early preview (buggy but promising) |
-| Unique Superpower   | Browser automation + safety | Semantic search + precision | Parallel agents + artifacts + browser control |
+   **Short description**: Perfect for technical writers and documentation maintainers
 
-## Takeaways & Honest Assessment
+   **Use case**: Writing and maintaining project documentation, README files, and API docs. Only edits markdown files to prevent accidental code changes.
 
-- These tools are legitimately transformative for speed — I cut DR planning time from days to hours.
-- Synergy is real: Use Cline/Kilo inside VSCode for daily work, jump to Antigravity for big parallel agent runs.
-- But skepticism warranted: All still hallucinate on obscure Kubernetes corner cases (e.g., etcd quorum edge cases, exotic CSI drivers). None are production-trustworthy without rigorous human review.
-- Security/edge cases remain the Achilles heel — always test in non-prod first.
-- Antigravity feels like the future, but right now (Dec 2025) it's rougher than mature extensions like Kilo Code.
+   **Custom instructions**: Focus on clarity, proper formatting, and comprehensive examples. Always check for broken links and ensure consistency in tone and style.
 
-## Recommendations
+2. Test Engineer
 
-1. Start with Kilo Code if you live in VSCode — it's the best balance today.
-2. Add Cline for planning sessions.
-3. Download Antigravity now while it's free and unlimited — the multi-agent workflow is mind-blowing when it works.
-4. Master prompt engineering + clear approval workflows.
-5. Hybrid everything: Human designs the architecture, agents implement/refactor, human validates/deploys.
+   **Role Definition**: You are a QA engineer and testing specialist focused on writing comprehensive tests, debugging failures, and improving code coverage.
 
-Agentic AI is no longer hype — it's shipping code today. But we're still in the "seatbelt required" phase. Experiment aggressively, review ruthlessly, and 2026 is going to be wild.
+   **Short description**: Dedicated to code quality and testing
+
+   **Use case**: Writing tests, debugging test failures, and improving test coverage. Restricted to test files to maintain focus.
+
+   **Custom instructions**: Prioritize test readability, comprehensive edge cases, and clear assertion messages. Always consider both happy path and error scenarios.
+
+3. Frontend Specialist
+
+   **Role Definition**: You are a frontend developer expert in React, TypeScript, and modern CSS. You focus on creating intuitive user interfaces and excellent user experiences.
+
+   **Short description**: Focused on UI/UX implementation
+
+   **Use case**: Building React components, styling, and frontend logic. Limited to frontend files to avoid backend concerns.
+
+   **Custom instructions**: Prioritize accessibility, responsive design, and performance. Use semantic HTML and follow React best practices.
+
+4. Code Reviewer
+
+   **Role Definition**: You are a senior software engineer conducting thorough code reviews. You focus on code quality, security, performance, and maintainability.
+
+   **Short description**: Read-only mode for safe code analysis
+
+   **Use case**: Analyzing code for reviews, security audits, or learning. No edit permissions ensure you can't accidentally modify anything.
+
+   **Custom instructions**: Provide constructive feedback on code patterns, potential bugs, security issues, and improvement opportunities. Be specific and actionable in suggestions.
+
+</Steps>
+
+### Example Usage Patterns
+
+I used these modes in combination with the core modes for different workflows:
+
+1. **Architecture + Documentation**: Start with **Architect** mode to design the system, then switch to **Documentation Specialist** to document the architecture.
+2. **Feature Development**: Use **Code** mode for implementation, then **Test Engineer** for test coverage, and **Frontend Specialist** for UI components.
+3. **Code Review**: Use **Code Reviewer** mode to analyze changes before merging.
+4. **Debugging**: Use **Debug** mode to identify issues, then **Test Engineer** to add tests - I used Go.
+
+### Switching Between Models and Modes
+
+One of the key advantages I found with Kilo Code was the ability to switch between different models and modes seamlessly. For example:
+
+- Use a faster, cheaper model like `x-ai/grok-code-fast-1` for initial exploration and planning
+- Switch to a more powerful model like `anthropic/claude-sonnet-4.5` (or Opus) for backend implementation
+- Switch to a model a bit more capable of frontend / design like `google/gemini-3-pro-preview` (if building a web app)
+- Use specialized modes like `Documentation Specialist` for documentation tasks (pick any model of your choice)
+- Switch to `Code Reviewer` mode for final validation
+
+This flexibility allowed me to optimize both cost and quality, using the right tool for each specific task.
+
+**Example prompt 1**: "Refactor a legacy Terraform module into reusable components with comprehensive documentation."
+
+**Example prompt 2**: "Design and architect a SaaS based solution that does X, Y, and Z. For backend tasks, number the tasks with B1, B2, etc. For frontend tasks, number them as F1, F2, etc."
+
+Workflow:
+1. `Architect` mode: Design the new module structure
+2. `Code` mode: Implement the refactoring
+3. `Documentation Specialist` mode: Create comprehensive documentation
+4. `Test Engineer` mode: Add tests
+5. `Code Reviewer` mode: Final validation
+
+Output: Clean, modular Terraform with excellent docs and tests. Required minimal follow-ups thanks to the structured approach.
+
+**I have not yet tested**: `Orchestrator`: Coordinate tasks across multiple nodes.
+
+## Additional Experiments: AGENTS.md, Speckit and Kilo Code Memory Bank
+
+### AGENTS.md
+
+[**AGENTS.md**](https://agents.md/) is a standardized, project-root Markdown file that provides AI coding agents (including Kilo Code) with persistent, human-readable guidelines on coding style, architecture, workflow, and setup instructions. [Refer to this example](https://raw.githubusercontent.com/pipitonelabs/pipitonelabs.com/refs/heads/main/AGENTS.md) to see how I'm using it in this project.
+
+### GitHub's Spec Kit
+
+I briefly experimented with GitHub's [Spec Kit](https://github.com/github/spec-kit), a toolkit for generating and validating code/API specifications in agentic workflows. It excels at automated spec testing via GitHub Actions and integrates with VSCode for spec-driven development. Feedback that I've heard is that this can really improve your codebase, but it adds unnecessary token overhead.
+
+### Kilo Code Memory Bank
+
+Kilo Code's memory bank feature enables persistent context storage across agent sessions. Define memory sections which agents retrieve. This maintains long-term knowledge, such as user preferences or project constraints, reducing repetition.
+
+[Refer to this example](https://github.com/pipitonelabs/k8s-gitops/blob/main/.kilocode/rules/memory-bank-rules.md) to see how I'm using the memory bank in my Kubernetes repo.
+
+**My Current Workflow:**
+- **Kilo Code** for implementation (with custom modes for specialized tasks)
+- **Cline** as a backup in case API errors increase with Kilo Code
+- Planning to evaluate **Claude Code** next for potential consolidation
+
+## Closing Thoughts
+
+The ability to switch between different models and specialized modes in Kilo Code has been awesome, allowing me to optimize for both cost and quality depending on the task at hand. While I'm interested in exploring Claude Code for its potential as a unified platform, the flexibility of Kilo Code's multi-model and multi-mode approach has been excellent for my current workflow.
+
+And also, it's mostly free (for the moment) but allows you to pay-as-you-go. I have some credits reserved for scenarios when I might want to use Sonnet 4.5, Opus 4.5, or Gemini 3 Pro.
+
+Thanks for reading. This is all new to me and I'm learning as I go, so of course this may not be the most accurate write-up of the century, but it works for me!
