@@ -1,3 +1,9 @@
+## [1.3.0](https://github.com/pipitonelabs/pipitonelabs.com/compare/v1.2.2...v1.3.0) (2025-12-12)
+
+### 🚀 Features
+
+* new blog post ([4908573](https://github.com/pipitonelabs/pipitonelabs.com/commit/4908573339ad8e5e35c2082cf7faf706a3a53bfb))
+
 ## [1.2.2](https://github.com/pipitonelabs/pipitonelabs.com/compare/v1.2.1...v1.2.2) (2025-12-11)
 
 ### 🐛 Bug Fixes
