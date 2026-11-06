@@ -18,7 +18,7 @@ ENV SHARP_IGNORE_GLOBAL_LIBVIPS=1
 FROM base AS deps
 
 # Copy only package files first (leverages Docker layer caching)
-COPY package*.json bun.lock ./
+COPY package*.json bun.lock bunfig.toml ./
 COPY packages/ ./packages/
 
 # Install dependencies (cached unless package files change)
