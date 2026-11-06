@@ -40,7 +40,7 @@ jobs:
           extra_plugins: |
             @semantic-release/git
             @semantic-release/changelog
-            conventional-changelog-conventionalcommits
+            conventional-changelog-conventionalcommits@8.0.0
 
   build-and-push:
     name: Build and Push Docker Image
