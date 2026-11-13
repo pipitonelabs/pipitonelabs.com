@@ -1,3 +1,9 @@
+## [1.7.0](https://github.com/pipitonelabs/pipitonelabs.com/compare/v1.6.1...v1.7.0) (2026-11-13)
+
+### 🚀 Features
+
+* update front rack image on about page ([94a104c](https://github.com/pipitonelabs/pipitonelabs.com/commit/94a104c90eff3d33ce4f3d24b0514824cf861288))
+
 ## [1.6.1](https://github.com/pipitonelabs/pipitonelabs.com/compare/v1.6.0...v1.6.1) (2026-11-13)
 
 ### 🐛 Bug Fixes
