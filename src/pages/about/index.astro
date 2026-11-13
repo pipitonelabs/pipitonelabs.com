@@ -35,7 +35,7 @@ const headings = [
   </ul>
 
   <h2 id='homelab'>HomeLab Environment</h2>
-  I run a full UniFi ecosystem for networking and management. The top patch panel handles all 1 Gb devices plus a handful of 2.5 Gb clients. Directly below it sits my 10 Gb switch, dedicated to high-bandwidth gear: the Dell R730xd, UniFi UNAS Pro, and a few UniFi U7 Pro XG access points with 10 Gb uplinks. Yes, it’s complete overkill.
+  I run a full UniFi ecosystem for networking and management. The top patch panel handles all 1 Gb devices plus a handful of 2.5 Gb clients. Directly below it sits my USW Pro XG 10 PoE, dedicated to high-bandwidth gear: the UniFi UNAS Pro, workstations, and a few UniFi U7 Pro XG access points with 10 Gb uplinks. The XG also provides the 10 Gb uplink to a USW Aggregation, where each Kubernetes node connects over two 10 Gb SFP+ ports bonded with LACP. Yes, it’s complete overkill.
 
   <Collapse title='Click to see HomeLab Rack - Front'><img src="https://raw.githubusercontent.com/pipitonelabs/k8s-gitops/main/docs/assets/rack-front.png" alt="Rack front view"></Collapse>
 
