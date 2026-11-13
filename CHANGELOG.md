@@ -1,3 +1,9 @@
+## [1.6.1](https://github.com/pipitonelabs/pipitonelabs.com/compare/v1.6.0...v1.6.1) (2026-11-13)
+
+### 🐛 Bug Fixes
+
+* keep timeline dates on one line and let content wrap ([523be42](https://github.com/pipitonelabs/pipitonelabs.com/commit/523be420d23deb9190776f10bc2ddcf2ad45ef12))
+
 ## [1.6.0](https://github.com/pipitonelabs/pipitonelabs.com/compare/v1.5.0...v1.6.0) (2026-11-06)
 
 ### 🚀 Features
