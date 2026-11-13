@@ -1,3 +1,9 @@
+## [1.8.0](https://github.com/pipitonelabs/pipitonelabs.com/compare/v1.7.0...v1.8.0) (2026-11-13)
+
+### 🚀 Features
+
+* update homelab switch layout on about page ([b17e158](https://github.com/pipitonelabs/pipitonelabs.com/commit/b17e158933a8ed0b6582b4243473388c5c79207e))
+
 ## [1.7.0](https://github.com/pipitonelabs/pipitonelabs.com/compare/v1.6.1...v1.7.0) (2026-11-13)
 
 ### 🚀 Features
