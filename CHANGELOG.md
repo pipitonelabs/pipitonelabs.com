@@ -1,3 +1,13 @@
+## [1.9.0](https://github.com/pipitonelabs/pipitonelabs.com/compare/v1.8.0...v1.9.0) (2026-11-16)
+
+### 🚀 Features
+
+* mention bottom patch panel and schedulable control plane nodes on about page ([96a74df](https://github.com/pipitonelabs/pipitonelabs.com/commit/96a74df64d03146b913bf55886cf95b0f6d8a326))
+
+### 🐛 Bug Fixes
+
+* simplify control plane scheduling wording on about page ([862ee9c](https://github.com/pipitonelabs/pipitonelabs.com/commit/862ee9ca21ec69b2221829f5f6de391d0eb0107f))
+
 ## [1.8.0](https://github.com/pipitonelabs/pipitonelabs.com/compare/v1.7.0...v1.8.0) (2026-11-13)
 
 ### 🚀 Features
