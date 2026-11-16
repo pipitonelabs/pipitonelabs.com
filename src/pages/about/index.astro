@@ -39,7 +39,7 @@ const headings = [
 
   <Collapse title='Click to see HomeLab Rack - Front'><img src="https://raw.githubusercontent.com/pipitonelabs/k8s-gitops/main/docs/assets/rack-front.png" alt="Rack front view"></Collapse>
 
-  In the back of the rack are three Minisforum MS-01 mini-PCs serving as my Talos control plane nodes for a fully HA control plane. They also run regular workloads: their Talos <code>KubeNodeConfig</code> sets only node labels and deliberately omits <code>taints:</code>, so they never receive the <code>node-role.kubernetes.io/control-plane:NoSchedule</code> taint and the scheduler treats them like any other node. They’re all mounted in custom 3D-printed 1U rack ears.
+  In the back of the rack are three Minisforum MS-01 mini-PCs serving as my Talos control plane nodes for a fully HA control plane. Scheduling is allowed on the control planes, so they also run regular workloads alongside a dedicated worker node I added to the cluster from a spare mini-PC. The MS-01s are all mounted in custom 3D-printed 1U rack ears.
 
   <Collapse title='Click to see HomeLab Rack - Rear'><img src="https://raw.githubusercontent.com/pipitonelabs/k8s-gitops/main/docs/assets/rack-rear.jpg" alt="Rack rear view"></Collapse>
 
