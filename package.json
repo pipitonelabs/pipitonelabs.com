@@ -24,6 +24,7 @@
     "@astrojs/check": "0.9.12",
     "@astrojs/compiler-rs": "^0.1.10",
     "@astrojs/markdown-remark": "^7.3.10",
+    "@astrojs/node": "^11.1.14",
     "@astrojs/rss": "4.0.19",
     "@astrojs/vercel": "11.0.22",
     "astro": "7.4.13",
@@ -35,7 +36,6 @@
     "typescript": "^6.0.3"
   },
   "devDependencies": {
-    "@astrojs/node": "^11.1.14",
     "@ianvs/prettier-plugin-sort-imports": "^4.7.1",
     "@typescript-eslint/parser": "^8.70.1",
     "eslint": "^10.11.0",

@@ -8,6 +8,7 @@
         "@astrojs/check": "0.9.12",
         "@astrojs/compiler-rs": "^0.1.10",
         "@astrojs/markdown-remark": "^7.3.10",
+        "@astrojs/node": "^11.1.14",
         "@astrojs/rss": "4.0.19",
         "@astrojs/vercel": "11.0.22",
         "astro": "7.4.13",
@@ -19,7 +20,6 @@
         "typescript": "^6.0.3",
       },
       "devDependencies": {
-        "@astrojs/node": "^11.1.14",
         "@ianvs/prettier-plugin-sort-imports": "^4.7.1",
         "@typescript-eslint/parser": "^8.70.1",
         "eslint": "^10.11.0",
@@ -751,7 +751,7 @@
 
     "emoji-regex": ["emoji-regex@10.6.0", "", {}, "sha512-toUI84YS5YmxW219erniWD0CIVOo46xGKColeNQRgOzDorgBi1v4D71/OFzgD9GO2UGKIv1C3Sp8DAn0+j5w7A=="],
 
-    "encodeurl": ["encodeurl@2.0.1", "", {}, "sha512-Ev/hIyePLZtpL98x562lvPtenrUfGr0lfaf44HFZ+hDEwso7ccV9QAZrEVLg0hxNAzygaAFxy2dYaAKKM0G06A=="],
+    "encodeurl": ["encodeurl@2.0.3", "", {}, "sha512-mIteYONiEfc4xWf2F1WXovh1c8npzS00vNeiUPdwFF+QlVJni+gNvpQltLMQhob8rew/bWWc/bGTuUr0EUGt0w=="],
 
     "entities": ["entities@7.0.1", "", {}, "sha512-TWrgLOFUQTH994YUyl1yT4uyavY5nNB5muff+RtWaqNVCAK408b5ZnnbNAUEWLTCpum9w6arT70i1XdQ4UeOPA=="],
 
