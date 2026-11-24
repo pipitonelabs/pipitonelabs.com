@@ -1,65 +1,53 @@
-# Base stage with system dependencies (cached layer)
-FROM oven/bun:1 AS base
+# Build stages run on Alpine (musl) so bun resolves the same sharp
+# prebuilt binaries (@img/sharp-linuxmusl-*) that the Alpine runtime needs.
+
+# Full dependency install (dev + prod) for the build
+FROM oven/bun:1.4.5-alpine AS deps
 
 WORKDIR /app
 
-# Install system dependencies for Sharp (cached layer - rarely changes)
-RUN apt-get update && apt-get install -y \
-    python3 \
-    build-essential \
-    libvips-dev \
-    git \
-    && rm -rf /var/lib/apt/lists/*
-
-# Configure Sharp to use bundled libvips
-ENV SHARP_IGNORE_GLOBAL_LIBVIPS=1
-
-# Dependencies stage (cached layer)
-FROM base AS deps
-
-# Copy only package files first (leverages Docker layer caching)
 COPY package*.json bun.lock bunfig.toml ./
 COPY packages/ ./packages/
 
-# Install dependencies (cached unless package files change)
-RUN bun install
+RUN bun install --frozen-lockfile
+
+# Production-only dependencies for the runtime image
+FROM oven/bun:1.4.5-alpine AS prod-deps
+
+WORKDIR /app
+
+COPY package*.json bun.lock bunfig.toml ./
+COPY packages/ ./packages/
+
+RUN bun install --frozen-lockfile --production
 
 # Build stage
 FROM deps AS build
 
-# Copy remaining source code (after dependencies are installed)
 COPY . .
 
-# Set build target to use Node adapter instead of Vercel
+# Use the Node adapter instead of Vercel
 ENV BUILD_TARGET=docker
 
-# Build the application
 RUN bun run build
 
-# Runtime stage
-FROM node:22-alpine
+# Runtime stage (pinned for reproducibility; bump on Node security releases)
+FROM node:22.23.5-alpine3.24
 
 WORKDIR /app
 
-# Install Sharp runtime dependencies for Alpine
-RUN apk add --no-cache vips
+# Pick up OS package fixes published after the base image was built
+RUN apk upgrade --no-cache
 
-# Create non-root user for security (best practice)
+# Non-root user (uid/gid 1001 must match the k8s securityContext)
 RUN addgroup --system --gid 1001 nodejs && \
-    adduser --system --uid 1001 astrojs
+    adduser --system --uid 1001 --ingroup nodejs astrojs
 
-# Copy built application and dependencies from build stage
-COPY --from=build /app/dist ./dist
-COPY --from=build /app/node_modules ./node_modules/
+COPY --from=build --chown=astrojs:nodejs /app/dist ./dist
+COPY --from=prod-deps --chown=astrojs:nodejs /app/node_modules ./node_modules
 
-# Change ownership to non-root user
-RUN chown -R astrojs:nodejs /app
-
-# Switch to non-root user
 USER astrojs
 
-# Expose port 4321
 EXPOSE 4321
 
-# Start the server
 CMD ["node", "dist/server/entry.mjs"]

@@ -69,19 +69,27 @@ export default function AstroPureIntegration(opts: UserInputConfig): AstroIntegr
         const selfIndex = config.integrations.findIndex((i) => i.name === 'astro-pure')
         config.integrations.splice(selfIndex + 1, 0, ...integrations)
 
+        // Astro 7 deprecates `markdown.remarkPlugins`/`rehypePlugins`. When the user runs the
+        // `unified()` processor, append to its options directly (same order Astro's own merge
+        // would produce); otherwise fall back to the legacy keys.
+        const processor = config.markdown.processor as
+          | { name: string; options: { remarkPlugins?: unknown[]; rehypePlugins?: unknown[] } }
+          | undefined
+        const useProcessor =
+          processor?.name === 'unified' &&
+          Array.isArray(processor.options.remarkPlugins) &&
+          Array.isArray(processor.options.rehypePlugins)
+        if (useProcessor) {
+          processor!.options.remarkPlugins!.push(...remarkPlugins)
+          processor!.options.rehypePlugins!.push(...rehypePlugins)
+        }
+
         updateConfig({
           vite: {
             // @ts-ignore
             plugins: [vitePluginUserConfig(userConfig, config)]
           },
-          markdown: {
-            remarkPlugins,
-            rehypePlugins
-            // rehypePlugins: [rehypeRtlCodeSupport()],
-            // shikiConfig:
-            // Configure Shiki theme if the user is using the default github-dark theme.
-            //   config.markdown.shikiConfig.theme !== 'github-dark' ? {} : { theme: 'css-variables' }
-          },
+          ...(useProcessor ? {} : { markdown: { remarkPlugins, rehypePlugins } }),
           scopedStyleStrategy: 'where',
           // If not already configured, default to prefetching all links on hover.
           prefetch: config.prefetch ?? { prefetchAll: true }
