@@ -1,3 +1,16 @@
+## [1.9.1](https://github.com/pipitonelabs/pipitonelabs.com/compare/v1.9.0...v1.9.1) (2026-11-24)
+
+### 🐛 Bug Fixes
+
+* declare rehype dependency in astro-pure ([35c2a9a](https://github.com/pipitonelabs/pipitonelabs.com/commit/35c2a9a49a94f6725e0421f6dcc70e368d1500e9))
+* move @astrojs/node to runtime dependencies ([c41da38](https://github.com/pipitonelabs/pipitonelabs.com/commit/c41da38313a34424299a5b509d7e57992158169c))
+* pin patched base images and harden runtime image ([933f64c](https://github.com/pipitonelabs/pipitonelabs.com/commit/933f64c1a2ccc285a7b7599ad47d318beb7b0b5d))
+* upgrade astro 7 and deps to patch critical/high CVEs ([11d49e9](https://github.com/pipitonelabs/pipitonelabs.com/commit/11d49e91a8ea2a6f56d9ed81fd3314d6a44669c3))
+
+### ♻️ Code Refactoring
+
+* migrate markdown plugins to astro 7 unified processor ([678daf3](https://github.com/pipitonelabs/pipitonelabs.com/commit/678daf3abf141c3a4cea080d5b456420367b5626))
+
 ## [1.9.0](https://github.com/pipitonelabs/pipitonelabs.com/compare/v1.8.0...v1.9.0) (2026-11-16)
 
 ### 🚀 Features
